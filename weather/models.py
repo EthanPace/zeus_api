@@ -31,3 +31,9 @@ def find(limit):
     
 def search(search_terms):
     return coll.find_one(search_terms)
+
+def delete(search_terms):
+    return coll.delete_one(search_terms)
+
+def bulk_delete(search_terms):
+    return coll.delete_many(search_terms)

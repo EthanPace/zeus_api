@@ -33,5 +33,15 @@ def post(request):
     return HttpResponse()
 def put(request):
     return HttpResponse()
+
 def delete(request):
-    return HttpResponse()
+    body = request.body.decode('utf-8')
+    try:
+        json_data = json.loads(body)
+    except:
+        return HttpResponse("false")
+    if(json_data['bulk'] == "false"):
+        response = models.delete(json_data)
+    elif(json_data['bulk'] == "true"):
+        response = models.bulk_delete(json_data)
+    return HttpResponse(response)
