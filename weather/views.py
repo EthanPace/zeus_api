@@ -1,5 +1,6 @@
 from django.http import HttpResponse, JsonResponse
 import json
+from bson.json_util import dumps
 import pymongo
 
 from . import models
@@ -25,7 +26,7 @@ def get(request):
     else:
         cursor = models.find(10)
     cursor_list = list(cursor)
-    json_data = cursor_list
+    json_data = dumps(cursor_list)
     return JsonResponse(json_data)
 
 def post(request):
