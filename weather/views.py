@@ -27,7 +27,7 @@ def get(request):
         cursor = models.find(10)
     cursor_list = list(cursor)
     json_data = dumps(cursor_list)
-    return JsonResponse(json_data)
+    return JsonResponse(json_data, safe="false")
 
 def post(request):
     body = request.body.decode('utf-8')
