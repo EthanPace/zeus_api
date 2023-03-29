@@ -30,7 +30,14 @@ def get(request):
     return JsonResponse(json_data)
 
 def post(request):
+    body = request.body.decode('utf-8')
+    json_data = json.loads(body)
+    if(json_data['bulk'] == "false"):
+        response = models.create(json_data)
+    elif(json_data['bulk'] == "true"):
+        response = models.bulk_create(json_data)
     return HttpResponse()
+
 def put(request):
     return HttpResponse()
 
