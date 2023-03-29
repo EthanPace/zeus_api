@@ -3,7 +3,7 @@ import pymongo
 
 client = pymongo.MongoClient("mongodb+srv://testUser:testPassword@nasadata.dpq7x0s.mongodb.net/test")
 db = client['weatherDataDB']
-coll = db['weather']
+coll = db['NSWWeatherData']
 
 def weather(json_object):
     new_record = {
