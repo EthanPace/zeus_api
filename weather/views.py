@@ -18,12 +18,14 @@ def weather(request):
 def get(request):
     body = request.body.decode('utf-8')
     if(len(body) > 0):
+        print("long")
         json_data = json.loads(body)
         try:
             cursor = models.search(json_data['search_terms'])
         except:
             cursor = models.find(json_data['limit'])
     else:
+        print("short")
         cursor = models.find(10)
     cursor_list = list(cursor)
     json_data = dumps(cursor_list)
