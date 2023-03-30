@@ -1,10 +1,10 @@
 from django.http import HttpResponse, JsonResponse
 import json
 from bson.json_util import dumps
-import pymongo
 
 from . import models
-
+#Weather View
+#Splits the request into the appropriate methods
 def weather(request):
     if(request.method == "GET"):
         return get(request)
@@ -14,9 +14,12 @@ def weather(request):
         return put(request)
     elif(request.method == "DELETE"):
         return delete(request)
-    
+#Get
+#Returns the top 10 results or the results of a search
+#Parameters: limit, search_terms
 def get(request):
     body = request.body.decode('utf-8')
+    print(body)
     try:
         json_data = json.loads(body)
         if 'limit' in json_data:
@@ -30,7 +33,9 @@ def get(request):
     cursor_list = list(cursor)
     json_data = dumps(cursor_list)
     return JsonResponse(json_data, safe=False)
-
+#Post
+#Creates a new record or records
+#Parameters: new (record/array), bulk (boolean)
 def post(request):
     body = request.body.decode('utf-8')
     try:
@@ -45,7 +50,9 @@ def post(request):
     except:
         return JsonResponse({'result':'false'})
     return HttpResponse(response)
-
+#Put
+#Updates a record or records
+#Parameters: search_terms, new (record/array), bulk (boolean)
 def put(request):
     body = request.body.decode('utf-8')
     try:
@@ -60,7 +67,9 @@ def put(request):
     except:
         return JsonResponse({'result':'false'})
     return HttpResponse(response)
-
+#Delete
+#Deletes a record or records
+#Parameters: search_terms, bulk (boolean)
 def delete(request):
     body = request.body.decode('utf-8')
     try:
