@@ -65,6 +65,16 @@ def bulk_create(new_array):
         object_list += weather(new)
     return coll.insert_many(object_list)
 
+def update(search_terms, new):
+    return coll.update_one(search_terms, new)
+
+def bulk_update(search_terms, new_array):
+    return_list = []
+    for new in new_array:
+        for search_term in search_terms:
+            return_list += coll.update_one(search_term, weather(new))
+    return return_list
+
 def delete(search_terms):
     return coll.delete_one(search_terms)
 

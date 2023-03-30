@@ -17,15 +17,15 @@ def weather(request):
     
 def get(request):
     body = request.body.decode('utf-8')
-    if(len(body) > 0):
-        print("long")
+    try:
         json_data = json.loads(body)
-        try:
-            cursor = models.search(json_data['search_terms'])
-        except:
+        if 'limit' in json_data:
             cursor = models.find(json_data['limit'])
-    else:
-        print("short")
+        elif 'search_terms' in json_data:
+            cursor = models.search(json_data['search_terms'])
+        else:
+            cursor = models.find(10)
+    except:
         cursor = models.find(10)
     cursor_list = list(cursor)
     json_data = dumps(cursor_list)
@@ -33,24 +33,45 @@ def get(request):
 
 def post(request):
     body = request.body.decode('utf-8')
-    json_data = json.loads(body)
-    if(json_data['bulk'] == "false"):
-        response = models.create(json_data)
-    elif(json_data['bulk'] == "true"):
-        response = models.bulk_create(json_data)
-    return HttpResponse()
+    try:
+        json_data = json.loads(body)
+        if 'bulk' in json_data:
+            if json_data['bulk'] == "false":
+                response = models.create(json_data['new'])
+            elif json_data['bulk'] == "true":   
+                response = models.bulk_create(json_data['new'])
+        else:
+            response = models.create(json_data['new'])
+    except:
+        return JsonResponse({'result':'false'})
+    return HttpResponse(response)
 
 def put(request):
-    return HttpResponse()
+    body = request.body.decode('utf-8')
+    try:
+        json_data = json.loads(body)
+        if 'bulk' in json_data:
+            if json_data['bulk'] == "false":
+                response = models.update(json_data['search_terms'], json_data['new'])
+            elif json_data['bulk'] == "true":   
+                response = models.bulk_update(json_data['search_terms'], json_data['new'])
+        else:
+            response = models.update(json_data['search_terms'], json_data['new'])
+    except:
+        return JsonResponse({'result':'false'})
+    return HttpResponse(response)
 
 def delete(request):
     body = request.body.decode('utf-8')
     try:
         json_data = json.loads(body)
+        if 'bulk' in json_data:
+            if json_data['bulk'] == "false":
+                response = models.delete(json_data['search_terms'])
+            elif json_data['bulk'] == "true":   
+                response = models.bulk_delete(json_data['search_terms'])
+        else:
+            response = models.delete(json_data['search_terms'])
     except:
-        return HttpResponse("false")
-    if(json_data['bulk'] == "false"):
-        response = models.delete(json_data)
-    elif(json_data['bulk'] == "true"):
-        response = models.bulk_delete(json_data)
+        return JsonResponse({'result':'false'})
     return HttpResponse(response)
