@@ -1,6 +1,22 @@
 from json import loads
 import pymongo
 
+# Weather:
+# 		- Tasks:
+# 			- Insert new fields to record the temperature information in Fahrenheit (6 fields) (multiple)
+# 			- Find the temperature, atmospheric pressure, radiation and precipitation recorded by a specific station at a given date and time (hour) (multiple)
+# 			- Create a query that includes an index key		
+# 		- Methods: 
+# 			- PUT:
+# 				- Input JSON: {6 different object ids}
+# 				- Output JSON {success / fail}
+# 			- GET:
+# 				- Input JSON: {}
+# 				- Output JSON {Top 10 results}
+				
+# 				- Input JSON: {Search terms}
+# 				- Output JSON {Result(s)}	
+
 client = pymongo.MongoClient("mongodb+srv://testUser:testPassword@nasadata.dpq7x0s.mongodb.net/test")
 db = client['weatherDataDB']
 coll = db['NSWWeatherData']
