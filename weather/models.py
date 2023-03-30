@@ -17,6 +17,14 @@ import pymongo
 # 				- Input JSON: {Search terms}
 # 				- Output JSON {Result(s)}	
 
+# Analytics:
+# 		- Tasks:
+# 			- Find the maximum precipitation recorded in the last 5 years (single)			
+# 		- Methods: 
+# 			- Get
+# 				- Input JSON: {field/column, aggregation}
+# 				- Output JSON {the aggregated data on the chosen column}		
+
 client = pymongo.MongoClient("mongodb+srv://testUser:testPassword@nasadata.dpq7x0s.mongodb.net/test")
 db = client['weatherDataDB']
 coll = db['NSWWeatherData']
