@@ -1,7 +1,7 @@
+#Imports
 from django.http import HttpResponse, JsonResponse
 import json
 from bson.json_util import dumps
-
 from . import models
 #Weather View
 #Splits the request into the appropriate methods
@@ -15,8 +15,8 @@ def weather(request):
     elif(request.method == "DELETE"):
         return delete(request)
 #Get
-#Returns the top 10 results or the results of a search
-#Parameters: limit, search_terms
+#Returns a list of records or one record based on search terms
+#Parameters: search_terms (dict/array), limit (int)
 def get(request):
     body = request.body.decode('utf-8')
     try:
@@ -28,7 +28,6 @@ def get(request):
             return JsonResponse(json_data, safe=False)
         elif 'search_terms' in json_data:
             cursor = models.search(json_data['search_terms'])
-            return JsonResponse(list(cursor))
     except:
         cursor = models.find(10)
         cursor_list = list(cursor)
