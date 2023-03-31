@@ -19,7 +19,6 @@ def weather(request):
 #Parameters: limit, search_terms
 def get(request):
     body = request.body.decode('utf-8')
-    print(body)
     try:
         json_data = json.loads(body)
         if 'limit' in json_data:
@@ -29,8 +28,7 @@ def get(request):
             return JsonResponse(json_data, safe=False)
         elif 'search_terms' in json_data:
             cursor = models.search(json_data['search_terms'])
-            json_data = cursor
-            return JsonResponse(json_data, safe=False)
+            return JsonResponse(list(cursor))
     except:
         cursor = models.find(10)
         cursor_list = list(cursor)
