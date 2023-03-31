@@ -24,15 +24,18 @@ def get(request):
         json_data = json.loads(body)
         if 'limit' in json_data:
             cursor = models.find(json_data['limit'])
+            cursor_list = list(cursor)
+            json_data = dumps(cursor_list)
+            return JsonResponse(json_data, safe=False)
         elif 'search_terms' in json_data:
             cursor = models.search(json_data['search_terms'])
-        else:
-            cursor = models.find(10)
+            json_data = cursor
+            return JsonResponse(json_data, safe=False)
     except:
         cursor = models.find(10)
-    cursor_list = list(cursor)
-    json_data = dumps(cursor_list)
-    return JsonResponse(json_data, safe=False)
+        cursor_list = list(cursor)
+        json_data = dumps(cursor_list)
+        return JsonResponse(json_data, safe=False)
 #Post
 #Creates a new record or records
 #Parameters: new (record/array), bulk (boolean)
