@@ -1,4 +1,5 @@
-from django.db import models
+from json import loads
+import pymongo
 
 # Users:
 # 		- Tasks:
@@ -34,3 +35,61 @@ from django.db import models
 # 						- Output JSON: {if authenticated}}
 
 # Create your models here.
+client = pymongo.MongoClient("mongodb+srv://testUser:testPassword@nasadata.dpq7x0s.mongodb.net/test")
+db = client['weatherDataDB']
+coll = db['users']
+#User
+#"Model" for the user object
+def user(json_object):
+    new_record = {
+        'username': json_object['username'],
+        'password': json_object['password'],
+        'access_level': json_object['access_level'],
+    }
+    return new_record
+#Create
+#Creates a single new user
+#Parameters: new user object
+def create(new):
+    return coll.insert_one(user(new))
+#Bulk_create
+#Creates multiple new users
+#Parameters: array of new user objects
+def bulk_create(new_array):
+    object_list = []
+    for new in new_array:
+        object_list += user(new)
+    return coll.insert_many(object_list)
+#Update
+#Updates a single user
+#Parameters: search terms, update object
+def update(search_terms, new):
+    return coll.update_one(search_terms, new)
+#Bulk_update
+#Updates multiple users
+#Parameters: search terms, update array
+def bulk_update(search_terms, new_array):
+    return_list = []
+    for new in new_array:
+        for search_term in search_terms:
+            return_list += coll.update_one(search_term, user(new))
+    return return_list
+#Delete
+#Deletes a single user
+#Parameters: search terms
+def delete(search_terms):
+    return coll.delete_one(search_terms)
+#Bulk_delete
+#Deletes multiple users
+#Parameters: search terms
+def bulk_delete(search_terms):
+    return coll.delete_many(search_terms)
+#Authenticate
+#Authenticates a user
+#Parameters: username, password
+def authenticate(terms):
+    exists = coll.find(terms)
+    if exists.count() > 0:
+        return True
+    else:
+        return False
