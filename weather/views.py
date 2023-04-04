@@ -14,25 +14,22 @@ def weather(request):
         return put(request)
     elif(request.method == "DELETE"):
         return delete(request)
+#Limit View
+#Returns a number of records equal to the limit
+#Parameters: limit (int)
+def limit(request, limit):
+    cursor = models.find(limit)
+    cursor_list = list(cursor)
+    json_data = dumps(cursor_list)
+    return JsonResponse(json_data, safe=False)
 #Get
-#Returns a list of records or one record based on search terms
-#Parameters: search_terms (dict/array), limit (int)
+#Returns ten records (default)
+#Parameters: none
 def get(request):
-    body = request.body.decode('utf-8')
-    try:
-        json_data = json.loads(body)
-        if 'limit' in json_data:
-            cursor = models.find(json_data['limit'])
-            cursor_list = list(cursor)
-            json_data = dumps(cursor_list)
-            return JsonResponse(json_data, safe=False)
-        elif 'search_terms' in json_data:
-            cursor = models.search(json_data['search_terms'])
-    except:
-        cursor = models.find(10)
-        cursor_list = list(cursor)
-        json_data = dumps(cursor_list)
-        return JsonResponse(json_data, safe=False)
+    cursor = models.find(10)
+    cursor_list = list(cursor)
+    json_data = dumps(cursor_list)
+    return JsonResponse(json_data, safe=False)
 #Post
 #Creates a new record or records
 #Parameters: new (record/array), bulk (boolean)
