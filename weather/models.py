@@ -52,9 +52,6 @@ def weather(json_object):
 
 def find(limit):
     return coll.find().limit(int(limit))
-    
-def search(search_terms):
-    return coll.find_one(search_terms)
 
 def create(new):
     return coll.insert_one(weather(new))
