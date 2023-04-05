@@ -7,12 +7,25 @@ from . import models
 #Stations View
 #Splits the request into the appropriate methods
 def stations(request):
-    if(request.method == "POST"):
+    if(request.method == "GET"):
+        return get(request)
+    elif(request.method == "POST"):
         return post(request)
     elif(request.method == "PUT"):
         return put(request)
     elif(request.method == "DELETE"):
         return delete(request)
+#Get
+#Gets a station or stations
+#Parameters: limit (int)
+def get(request):
+    g = request.GET
+    if 'limit' in g:
+        cursor = models.find(g['limit'])
+    else:
+        cursor = models.find(10)
+    return JsonResponse(dumps(list(cursor)), safe=False)
+
 #Post
 #Creates a new station or stations
 #Parameters: new (record/array), bulk (boolean)
