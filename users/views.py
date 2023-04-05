@@ -14,6 +14,16 @@ def users(request):
         return put(request)
     elif(request.method == "DELETE"):
         return delete(request)
+#Get
+#Returns ten records
+#Parameters: none
+def get(request):
+    #Use the get "model" to get the records
+    cursor = models.get(10)
+    #Convert the cursor to a list, then to JSON
+    response = dumps(list(cursor))
+    #Return the response
+    return JsonResponse(response)
 #Post
 #Creates a new record or records
 #Parameters: new (record/array), bulk (boolean)

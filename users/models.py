@@ -47,6 +47,11 @@ def user(json_object):
         'access_level': json_object['access_level'],
     }
     return new_record
+#Get
+#Returns a number of records equal to the limit
+#Parameters: none
+def get(limit):
+    return coll.find().limit(limit)
 #Create
 #Creates a single new user
 #Parameters: new user object
