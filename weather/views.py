@@ -14,19 +14,17 @@ def weather(request):
         return put(request)
     elif(request.method == "DELETE"):
         return delete(request)
-#Limit View
-#Returns a number of records equal to the limit
-#Parameters: limit (int)
-def limit(request, limit):
-    cursor = models.find(limit)
-    cursor_list = list(cursor)
-    json_data = dumps(cursor_list)
-    return JsonResponse(json_data, safe=False)
 #Get
-#Returns ten records (default)
+#Returns ten records (default), or a specified number of records, or a specific record based on search terms
 #Parameters: none
 def get(request):
-    cursor = models.find(10)
+    g = request.GET
+    if 'oid' in g and 'limit' in g:
+        cursor = models.find(g['oid'], g['limit'])
+    elif 'oid' in g:
+        cursor = models.find(g['oid'])
+    elif 'limit' in g:
+        cursor = models.find(g['limit'])
     cursor_list = list(cursor)
     json_data = dumps(cursor_list)
     return JsonResponse(json_data, safe=False)

@@ -50,8 +50,11 @@ def weather(json_object):
     }
     return new_record
 
-def find(limit):
-    return coll.find().limit(int(limit))
+def find(search = "", limit = 10):
+    if search == "":
+        return coll.find().limit(limit)
+    else:
+        return coll.find(loads("{\"_id\": {\"ObjectId\": \"" + search + "\"}}")).limit(limit)
 
 def create(new):
     return coll.insert_one(weather(new))
