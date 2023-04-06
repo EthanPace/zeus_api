@@ -51,14 +51,14 @@ def weather(json_object):
     }
     return new_record
 
-def find(limit = 10):
-    return coll.find().limit(limit)
+def find(search = "", limit = 10):
+    if search == "":
+        return coll.find().limit(limit)
+    else:
+        print (search)
+        return coll.find({"_id":{ObjectId(search)}}).limit(limit)
     
 def search(query):
-    if 'oid' in query:
-        oid = query['oid']
-    else:
-        oid = ""
     if 'limit' in query:
         limit = int(query['limit'])
     else:
@@ -71,9 +71,12 @@ def search(query):
         device_id = query['device_id']
     else:
         device_id = ""
-    return coll.find({"_id":ObjectId(oid), "Time":time, "Device ID":device_id}).limit(limit)
+    return coll.find({"Time":time, "Device ID":device_id}).limit(limit)
 
 def create(new):
+    print ("========================= Create =========================")
+    print ("==== Weather Object ====")
+    print (weather(new))
     return coll.insert_one(weather(new))
 
 def bulk_create(new_array):

@@ -1,10 +1,12 @@
 #Imports
 from django.http import HttpResponse, JsonResponse
+from django.views.decorators.csrf import csrf_exempt
 import json
 from bson.json_util import dumps
 from . import models
 #Weather View
 #Splits the request into the appropriate methods
+@csrf_exempt
 def weather(request):
     if(request.method == "GET"):
         return get(request)
@@ -19,14 +21,18 @@ def weather(request):
 #Parameters: none
 def get(request):
     query = request.GET
-    if 'limit' in query and not 'oid' in query and not 'time' in query and not 'device_id' in query:
+    if 'limit' in query or 'oid' in query and not 'time' in query and not 'device_id' in query:
+        print("find")
         print(query)
-        cursor = models.find(int(query['limit']))
-    elif 'oid' in query or 'time' in query or 'device_id' in query:
+        cursor = models.find(query.get('oid', ""), int(query.get('limit', 10)))
+    elif 'time' in query or 'device_id' in query:
+        print("search")
         print(query)
         cursor = models.search(query)
     else:
-        cursor = models.find(10)
+        print("default")
+        print(query)
+        cursor = models.find("",10)
     cursor_list = list(cursor)
     json_data = dumps(cursor_list)
     return JsonResponse(json_data, safe=False)
@@ -35,17 +41,12 @@ def get(request):
 #Parameters: new (record/array), bulk (boolean)
 def post(request):
     body = request.body.decode('utf-8')
-    try:
-        json_data = json.loads(body)
-        if 'bulk' in json_data:
-            if json_data['bulk'] == "false":
-                response = models.create(json_data['new'])
-            elif json_data['bulk'] == "true":   
-                response = models.bulk_create(json_data['new'])
-        else:
-            response = models.create(json_data['new'])
-    except:
-        return JsonResponse({'result':'false'})
+    bulk = request.POST.get('bulk', "false")
+    json_data = json.loads(body)
+    if bulk == "false":
+        response = models.create(json_data)
+    elif bulk == "true":
+        response = models.bulk_create(json_data)
     return HttpResponse(response)
 #Put
 #Updates a record or records
