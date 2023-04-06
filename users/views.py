@@ -62,37 +62,25 @@ def put(request):
     return HttpResponse(response)
 #Delete
 #Deletes a record or records
-#Parameters: search_terms (record/array), bulk (boolean)
+#Parameters: search_terms, bulk (boolean)
 def delete(request):
-    #Get the request body in sring format
     body = request.body.decode('utf-8')
-    try: #Try to parse the body as JSON
-        json_data = json.loads(body)
-        #Check if the request is a bulk operation
-        if 'bulk' in json_data:
-            if json_data['bulk'] == "false": #If not bulk, delete one record
-                response = models.delete(json_data['search_terms'])
-            elif json_data['bulk'] == "true": #If bulk, delete multiple records
-                response = models.bulk_delete(json_data['search_terms'])
-        else: #By default, delete one record
-            response = models.delete(json_data['search_terms'])
-    except: #If the body is not JSON, return false
-        return JsonResponse({'result':'false'})
-    #Return the response
+    bulk = request.POST.get('bulk', "false")
+    json_data = json.loads(body)
+    if bulk == "false":
+        response = models.delete(json_data)
+    elif bulk == "true":
+        response = models.bulk_delete(json_data)
     return HttpResponse(response)
 #Authenticate
 #Allows a user to log in
 #Parameters: username, password
+@csrf_exempt
 def authenticate(request):
     #Get the request body in sring format
     body = request.body.decode('utf-8')
-    try: #Try to parse the body as JSON
-        json_data = json.loads(body)
-        #Use the authenticate "model" to check if the user exists
-        response = models.authenticate(json_data['username'], json_data['password'])
-    except: #If the body is not JSON, return false
-        return JsonResponse({'result':'false'})
-    #Use a global variable to store the login status
+    json_data = json.loads(body)
+    response = models.authenticate(json_data['name'], json_data['password'])
     if(response == "true"):
         logged_in = True
     else:

@@ -90,9 +90,10 @@ def bulk_delete(search_terms):
 #Authenticate
 #Authenticates a user
 #Parameters: username, password
-def authenticate(terms):
-    exists = coll.find(terms)
-    if exists.count() > 0:
+def authenticate(name, password):
+    exists = coll.count_documents({"name":name,"password":password})
+    print(exists)
+    if exists > 0:
         return True
     else:
         return False
