@@ -1,4 +1,5 @@
 from json import loads
+from bson.objectid import ObjectId
 import pymongo
 
 # Weather:
@@ -50,11 +51,27 @@ def weather(json_object):
     }
     return new_record
 
-def find(search = "", limit = 10):
-    if search == "":
-        return coll.find().limit(limit)
+def find(limit = 10):
+    return coll.find().limit(limit)
+    
+def search(query):
+    if 'oid' in query:
+        oid = query['oid']
     else:
-        return coll.find(loads("{\"_id\": {\"ObjectId\": \"" + search + "\"}}")).limit(limit)
+        oid = ""
+    if 'limit' in query:
+        limit = int(query['limit'])
+    else:
+        limit = 10
+    if 'time' in query:
+        time = query['time']
+    else:
+        time = ""
+    if 'device_id' in query:
+        device_id = query['device_id']
+    else:
+        device_id = ""
+    return coll.find({"_id":ObjectId(oid), "Time":time, "Device ID":device_id}).limit(limit)
 
 def create(new):
     return coll.insert_one(weather(new))

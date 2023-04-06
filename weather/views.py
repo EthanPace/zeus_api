@@ -18,13 +18,15 @@ def weather(request):
 #Returns ten records (default), or a specified number of records, or a specific record based on search terms
 #Parameters: none
 def get(request):
-    g = request.GET
-    if 'oid' in g and 'limit' in g:
-        cursor = models.find(g['oid'], g['limit'])
-    elif 'oid' in g:
-        cursor = models.find(g['oid'])
-    elif 'limit' in g:
-        cursor = models.find(g['limit'])
+    query = request.GET
+    if 'limit' in query and not 'oid' in query and not 'time' in query and not 'device_id' in query:
+        print(query)
+        cursor = models.find(int(query['limit']))
+    elif 'oid' in query or 'time' in query or 'device_id' in query:
+        print(query)
+        cursor = models.search(query)
+    else:
+        cursor = models.find(10)
     cursor_list = list(cursor)
     json_data = dumps(cursor_list)
     return JsonResponse(json_data, safe=False)
