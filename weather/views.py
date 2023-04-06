@@ -70,15 +70,10 @@ def put(request):
 #Parameters: search_terms, bulk (boolean)
 def delete(request):
     body = request.body.decode('utf-8')
-    try:
-        json_data = json.loads(body)
-        if 'bulk' in json_data:
-            if json_data['bulk'] == "false":
-                response = models.delete(json_data['search_terms'])
-            elif json_data['bulk'] == "true":   
-                response = models.bulk_delete(json_data['search_terms'])
-        else:
-            response = models.delete(json_data['search_terms'])
-    except:
-        return JsonResponse({'result':'false'})
+    bulk = request.POST.get('bulk', "false")
+    json_data = json.loads(body)
+    if bulk == "false":
+        response = models.delete(json_data)
+    elif bulk == "true":
+        response = models.bulk_delete(json_data)
     return HttpResponse(response)
