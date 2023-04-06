@@ -37,15 +37,13 @@ import pymongo
 # Create your models here.
 client = pymongo.MongoClient("mongodb+srv://testUser:testPassword@nasadata.dpq7x0s.mongodb.net/test")
 db = client['weatherDataDB']
-coll = db['users']
+coll = db['employees']
 #User
 #"Model" for the user object
 def user(json_object):
-    new_record = {
-        'username': json_object['username'],
-        'password': json_object['password'],
-        'access_level': json_object['access_level'],
-    }
+    new_record = {}
+    for key in json_object:
+        new_record[key] = json_object[key]
     return new_record
 #Get
 #Returns a number of records equal to the limit

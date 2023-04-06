@@ -1,5 +1,6 @@
 #Imports
 from django.http import HttpResponse, JsonResponse
+from django.views.decorators.csrf import csrf_exempt
 import json
 from bson.json_util import dumps
 from . import models
@@ -7,8 +8,11 @@ from . import models
 logged_in = False
 #User View
 #Splits the request into the appropriate methods
+@csrf_exempt
 def users(request):
-    if(request.method == "POST"): 
+    if(request.method == "GET"):
+        return get(request)
+    elif(request.method == "POST"): 
         return post(request)
     elif(request.method == "PUT"):
         return put(request)
@@ -23,25 +27,17 @@ def get(request):
     #Convert the cursor to a list, then to JSON
     response = dumps(list(cursor))
     #Return the response
-    return JsonResponse(response)
+    return JsonResponse(response, safe=False)
 #Post
 #Creates a new record or records
 #Parameters: new (record/array), bulk (boolean)
 def post(request):
     #Get the request body in sring format
     body = request.body.decode('utf-8')
-    try: #Try to parse the body as JSON
-        json_data = json.loads(body)
-        #Check if the request is a bulk operation
-        if 'bulk' in json_data:
-            if json_data['bulk'] == "false": #If not bulk, create one record
-                response = models.create(json_data['new'])
-            elif json_data['bulk'] == "true": #If bulk, create multiple records
-                response = models.bulk_create(json_data['new'])
-        else: #By default, create one record
-            response = models.create(json_data['new'])
-    except: #If the body is not JSON, return false
-        return JsonResponse({'result':'false'})
+    #Parse the body as JSON
+    json_data = json.loads(body)
+    #Use the create "model" to create the record
+    response = models.create(json_data)
     #Return the response
     return HttpResponse(response)
 #Put
