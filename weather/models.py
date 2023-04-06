@@ -31,24 +31,9 @@ db = client['weatherDataDB']
 coll = db['NSWWeatherData']
 
 def weather(json_object):
-    new_record = {
-        'Time': json_object['Time'],
-        'Device ID': json_object['Device ID'],
-        'Device Name': json_object['Device Name'],
-        'Latitude': json_object['Latitude'],
-        'Longitude': json_object['Longitude'],
-        'Temperature (°C)': json_object['Temperature (°C)'],
-        'Atmospheric Pressure (kPa)': json_object['Atmospheric Pressure (kPa)'],
-        'Lightning Average Distance (km)': json_object['Lightning Average Distance (km)'],
-        'Lightning Strike Count': json_object['Lightning Strike Count'],
-        'Maximum Wind Speed (m/s)': json_object['Maximum Wind Speed (m/s)'],
-        'Precipitation mm/h': json_object['Precipitation mm/h'],
-        'Solar Radiation (W/m2)': json_object['Solar Radiation (W/m2)'],
-        'Vapor Pressure (kPa)': json_object['Vapor Pressure (kPa)'],
-        'Humidity (%)': json_object['Humidity (%)'],
-        'Wind Direction (°)': json_object['Wind Direction (°)'],
-        'Wind Speed (m/s)': json_object['Wind Speed (m/s)']
-    }
+    new_record = {}
+    for key in json_object:
+        new_record[key] = json_object[key]
     return new_record
 
 def find(search = "", limit = 10):
@@ -74,9 +59,6 @@ def search(query):
     return coll.find({"Time":time, "Device ID":device_id}).limit(limit)
 
 def create(new):
-    print ("========================= Create =========================")
-    print ("==== Weather Object ====")
-    print (weather(new))
     return coll.insert_one(weather(new))
 
 def bulk_create(new_array):
@@ -89,10 +71,14 @@ def update(search_terms, new):
     return coll.update_one(search_terms, new)
 
 def bulk_update(search_terms, new_array):
+    print ("================ BULK UPDATE ==================")
+    print (search_terms)
+    print (new_array)
+    print ("===============================================")
     return_list = []
     for new in new_array:
         for search_term in search_terms:
-            return_list += coll.update_one(search_term, weather(new))
+            return_list += coll.update_one(search_term, new)
     return return_list
 
 def delete(search_terms):

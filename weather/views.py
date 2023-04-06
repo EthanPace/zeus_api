@@ -3,6 +3,7 @@ from django.http import HttpResponse, JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 import json
 from bson.json_util import dumps
+from bson.objectid import ObjectId
 from . import models
 #Weather View
 #Splits the request into the appropriate methods
@@ -12,8 +13,8 @@ def weather(request):
         return get(request)
     elif(request.method == "POST"):
         return post(request)
-    elif(request.method == "PUT"):
-        return put(request)
+    elif(request.method == "PATCH"):
+        return patch(request)
     elif(request.method == "DELETE"):
         return delete(request)
 #Get
@@ -51,19 +52,36 @@ def post(request):
 #Put
 #Updates a record or records
 #Parameters: search_terms, new (record/array), bulk (boolean)
-def put(request):
+def patch(request):
     body = request.body.decode('utf-8')
-    try:
-        json_data = json.loads(body)
-        if 'bulk' in json_data:
-            if json_data['bulk'] == "false":
-                response = models.update(json_data['search_terms'], json_data['new'])
-            elif json_data['bulk'] == "true":   
-                response = models.bulk_update(json_data['search_terms'], json_data['new'])
-        else:
-            response = models.update(json_data['search_terms'], json_data['new'])
-    except:
-        return JsonResponse({'result':'false'})
+    json_data = json.loads(body)
+    bulk = json_data.get('bulk', "false")
+    limit = int(json_data.get('limit', 10))
+    oid = json_data.get('oid', "false")
+    print ("================ PATCH ==================")
+    print ("== body ==")
+    print (body)
+    print ("== request ==")
+    print (request)
+    print ("== request.PATCH ==")
+    print (request)
+    print ("== bulk ==")
+    print (bulk)
+    print (json_data)
+    if bulk == "false":
+        print ("===== bulk false =====")
+        print ("== search_terms ==")
+        print (json_data['search_terms'])
+        print ("== new ==")
+        print (json_data['new'])
+        response = models.update(json_data['search_terms'], json_data['new'])
+    elif bulk == "true":
+        print ("===== bulk true =====")
+        print ("== search_terms ==")
+        print (json_data['search_terms'])
+        print ("== new ==")
+        print (json_data['new'])
+        response = models.bulk_update(json_data['search_terms'], json_data['new'])
     return HttpResponse(response)
 #Delete
 #Deletes a record or records
