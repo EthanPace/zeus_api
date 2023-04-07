@@ -20,12 +20,9 @@ db = client['weatherDataDB']
 coll = db['stations']
 
 def station(json_object):
-    new_record = {
-        'Device ID': json_object['Device ID'],
-        'Device Name': json_object['Device Name'],
-        'Latitude': json_object['Latitude'],
-        'Longitude': json_object['Longitude'],
-    }
+    new_record = {}
+    for key in json_object:
+        new_record[key] = json_object[key]
     return new_record
 
 def find(limit):
