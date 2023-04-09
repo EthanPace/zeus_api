@@ -22,17 +22,11 @@ def weather(request):
 #Parameters: none
 def get(request):
     query = request.GET
-    if 'limit' in query or 'oid' in query and not 'time' in query and not 'device_id' in query:
-        print("find")
-        print(query)
-        cursor = models.find(query.get('oid', ""), int(query.get('limit', 10)))
-    elif 'time' in query or 'device_id' in query:
-        print("search")
-        print(query)
+    if 'time' in query or 'device_id' in query:
         cursor = models.search(query)
+    elif 'limit' in query or 'oid' in query:
+        cursor = models.find(query.get('oid', ""), int(query.get('limit', 10)))
     else:
-        print("default")
-        print(query)
         cursor = models.find("",10)
     cursor_list = list(cursor)
     json_data = dumps(cursor_list)

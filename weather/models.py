@@ -1,4 +1,5 @@
 from json import loads
+from bson.json_util import dumps
 from bson.objectid import ObjectId
 import pymongo
 
@@ -40,23 +41,20 @@ def find(search = "", limit = 10):
     if search == "":
         return coll.find().limit(limit)
     else:
-        print (search)
-        return coll.find({"_id":{ObjectId(search)}}).limit(limit)
+        return coll.find({"_id":ObjectId(search)}).limit(limit)
     
 def search(query):
-    if 'limit' in query:
-        limit = int(query['limit'])
-    else:
-        limit = 10
-    if 'time' in query:
+    if 'time' in query and 'device_id' in query:
         time = query['time']
-    else:
-        time = ""
-    if 'device_id' in query:
         device_id = query['device_id']
-    else:
-        device_id = ""
-    return coll.find({"Time":time, "Device ID":device_id}).limit(limit)
+        return coll.find({"Time":time, "Device ID":device_id}).limit(int(query.get('limit', 10)))
+    elif 'time' in query:
+        time = query['time']
+        return coll.find({"Time":time}).limit(int(query.get('limit', 10)))
+    elif 'device_id' in query:
+        device_id = query['device_id']
+        return coll.find({"Device ID":device_id}).limit(int(query.get('limit', 10)))
+        
 
 def create(new):
     return coll.insert_one(weather(new))
