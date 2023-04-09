@@ -1,4 +1,5 @@
 from json import loads
+from bson.json_util import dumps
 import pymongo
 
 # Users:
@@ -40,29 +41,40 @@ db = client['weatherDataDB']
 coll = db['employees']
 #User
 #"Model" for the user object
-def user(json_object):
+def user(username, password, other_keys):
     new_record = {}
-    for key in json_object:
-        new_record[key] = json_object[key]
+    for key in other_keys:
+        new_record[key] = other_keys[key]
+    new_record['username'] = username
+    new_record['password'] = password
     return new_record
 #Get
 #Returns a number of records equal to the limit
 #Parameters: none
 def get(limit):
     return coll.find().limit(limit)
+#Find
+#Returns one record that matches the search terms
+#Parameters: search terms
+def find(search_terms):
+    return coll.find_one(search_terms)
 #Create
 #Creates a single new user
 #Parameters: new user object
-def create(new):
-    return coll.insert_one(user(new))
+def create(keys, hashed_password):
+    return coll.insert_one(user(keys['name'], hashed_password, keys))
 #Bulk_create
 #Creates multiple new users
 #Parameters: array of new user objects
-def bulk_create(new_array):
-    object_list = []
-    for new in new_array:
-        object_list += user(new)
-    return coll.insert_many(object_list)
+def bulk_create(keys, hashed_passwords):
+    cursors = []
+    for i in range(len(keys)):
+        curs = coll.insert_one(user(keys[i]['username'], hashed_passwords[i], keys[i]))
+        cursors.append(curs)
+    return cursors
+
+        
+        
 #Update
 #Updates a single user
 #Parameters: search terms, update object
@@ -90,10 +102,17 @@ def bulk_delete(search_terms):
 #Authenticate
 #Authenticates a user
 #Parameters: username, password
-def authenticate(name, password):
-    exists = coll.count_documents({"name":name,"password":password})
+def authenticate(username, password):
+    exists = coll.count_documents({"username":username,"password":password})
     print(exists)
     if exists > 0:
         return True
     else:
         return False
+#Get_Perms
+#Gets the permissions of a user
+#Parameters: username
+def get_perms(username):
+    cursor = coll.find_one({"username":username})
+    user_object = loads(dumps(list(cursor)[0]))
+    return user_object['permissions']

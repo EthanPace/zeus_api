@@ -3,7 +3,6 @@ from django.http import HttpResponse, JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 import json
 from bson.json_util import dumps
-from bson.objectid import ObjectId
 from . import models
 #Weather View
 #Splits the request into the appropriate methods

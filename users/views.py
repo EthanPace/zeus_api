@@ -4,8 +4,7 @@ from django.views.decorators.csrf import csrf_exempt
 import json
 from bson.json_util import dumps
 from . import models
-#Global Variables
-logged_in = False
+from hashlib import sha256
 #User View
 #Splits the request into the appropriate methods
 @csrf_exempt
@@ -36,10 +35,28 @@ def post(request):
     body = request.body.decode('utf-8')
     #Parse the body as JSON
     json_data = json.loads(body)
-    #Use the create "model" to create the record
-    response = models.create(json_data)
+    #Check if the request is a bulk operation
+    if json_data['bulk'] == "true":
+        #Get the request body in sring format
+        body = request.body.decode('utf-8')
+        #Parse the body as JSON
+        json_data = json.loads(body)
+        #Hash the passwords
+        hashes = []
+        for user in json_data['users']:
+            hashes.append(hash(user['password']))
+        #Use the create "model" to create the records
+        response = models.bulk_create(json_data['users'], hashes)
+    else:
+        #Get the request body in sring format
+        body = request.body.decode('utf-8')
+        #Parse the body as JSON
+        json_data = json.loads(body)
+        #Use the create "model" to create the record
+        response = models.create(json_data, hash(json_data['password']))
     #Return the response
     return HttpResponse(response)
+
 #Put
 #Updates a record or records
 #Parameters: search_terms, new (record/array), bulk (boolean)
@@ -77,13 +94,36 @@ def delete(request):
 #Parameters: username, password
 @csrf_exempt
 def authenticate(request):
-    #Get the request body in sring format
-    body = request.body.decode('utf-8')
-    json_data = json.loads(body)
-    response = models.authenticate(json_data['name'], json_data['password'])
-    if(response == "true"):
-        logged_in = True
+    if request.method == "GET":
+        if request.session['auth']:
+            return HttpResponse("true")
+        else:
+            return HttpResponse("false")
     else:
-        logged_in = False
-    #Return the response (true/false)
-    return HttpResponse(response)
+        #Get the request body in sring format
+        body = request.body.decode('utf-8')
+        json_data = json.loads(body)
+        print(hash(json_data['password']))
+        response = models.authenticate(json_data['username'], hash(json_data['password']))
+        if response:
+            request.session['auth'] = True
+            request.session['perms'] = models.get_perms(json_data['username'])
+        else:
+            request.session['auth'] = False
+            request.session['perms'] = None
+        #Return the response (true/false)
+        return HttpResponse(response)
+#Logout
+#Allows a user to log out
+#Parameters: none
+@csrf_exempt
+def logout(request):
+    request.session['auth'] = False
+    request.session['perms'] = None
+    return HttpResponse("true")
+#Helper Functions
+#Hash
+#Hashes a string
+#Parameters: string
+def hash(string):
+    return sha256(string.encode('utf-8')).hexdigest()
