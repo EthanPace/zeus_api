@@ -12,8 +12,8 @@ def weather(request):
         return get(request)
     elif(request.method == "POST"):
         return post(request)
-    elif(request.method == "PATCH"):
-        return patch(request)
+    elif(request.method == "PUT"):
+        return put(request)
     elif(request.method == "DELETE"):
         return delete(request)
 #Get
@@ -44,37 +44,19 @@ def post(request):
     return HttpResponse(response)
 #Put
 #Updates a record or records
-#Parameters: search_terms, new (record/array), bulk (boolean)
-def patch(request):
+def put(request):
     body = request.body.decode('utf-8')
     json_data = json.loads(body)
+    #Get bulk parameter
     bulk = json_data.get('bulk', "false")
-    limit = int(json_data.get('limit', 10))
-    oid = json_data.get('oid', "false")
-    print ("================ PATCH ==================")
-    print ("== body ==")
-    print (body)
-    print ("== request ==")
-    print (request)
-    print ("== request.PATCH ==")
-    print (request)
-    print ("== bulk ==")
-    print (bulk)
-    print (json_data)
+    #Check if this is a bulk update
     if bulk == "false":
-        print ("===== bulk false =====")
-        print ("== search_terms ==")
-        print (json_data['search_terms'])
-        print ("== new ==")
-        print (json_data['new'])
-        response = models.update(json_data['search_terms'], json_data['new'])
+        response = models.update({json_data['search_field']:json_data['search_term']}, {'$set':{json_data['update_field']:json_data['update_value']}})
     elif bulk == "true":
-        print ("===== bulk true =====")
-        print ("== search_terms ==")
-        print (json_data['search_terms'])
-        print ("== new ==")
-        print (json_data['new'])
-        response = models.bulk_update(json_data['search_terms'], json_data['new'])
+        if 'limit' in json_data:
+            response = models.bulk_update({json_data['search_field']:json_data['search_term']}, {'$set':{json_data['update_field']:json_data['update_value']}}, int(json_data['limit']))
+        else:
+            response = models.bulk_update({json_data['search_field']:json_data['search_term']}, {'$set':{json_data['update_field']:json_data['update_value']}})
     return HttpResponse(response)
 #Delete
 #Deletes a record or records

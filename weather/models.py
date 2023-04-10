@@ -65,19 +65,20 @@ def bulk_create(new_array):
         object_list += weather(new)
     return coll.insert_many(object_list)
 
-def update(search_terms, new):
-    return coll.update_one(search_terms, new)
+def update(query, update):
+    return coll.update_one(query, update)
 
-def bulk_update(search_terms, new_array):
-    print ("================ BULK UPDATE ==================")
-    print (search_terms)
-    print (new_array)
-    print ("===============================================")
-    return_list = []
-    for new in new_array:
-        for search_term in search_terms:
-            return_list += coll.update_one(search_term, new)
-    return return_list
+def bulk_update(query, update, limit = None):
+    if limit == None:
+        return coll.update_many(query, update)
+    else:
+        try:
+            cursor = coll.find(query).limit(limit)
+            for document in cursor:
+                coll.update_one({"_id":document["_id"]}, update)
+            return {"results": "success"}
+        except:
+            return {"results": "fail"}
 
 def delete(search_terms):
     return coll.delete_one(search_terms)
