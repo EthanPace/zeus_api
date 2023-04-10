@@ -1,4 +1,5 @@
 from json import loads
+from bson.json_util import dumps
 import pymongo
 
 #Analytics:
@@ -17,12 +18,23 @@ coll = db['weatherData']
 #Returns the aggregated data on the chosen column
 #Parameters: field, aggregation
 def get_aggregation(field, aggregation):
+    if field == "precipitation":
+        field = "Precipitation mm/h"
     #Aggregation pipeline
     pipeline = [
-        #Filter out data before 2015
-        { "$match": { "Date": { "$gte": "2015-01-01" } } },
-        #Group by the aggregation
-        { "$group": { "_id": None, "max_precipitation": { aggregation: "$" + field } } }
+        {
+            "$group": {
+                "_id": "$your_grouping_field",
+                "max_precipitation": { "$max": "$Precipitation mm/s" }
+            }
+        }
     ]
+    #[
+        #Filter out data before 2015
+        #{ "$match": { "Time": { "$gte": "2015-01-01T00:00:00+10:00" } } },
+        #Group by the aggregation
+        #{ "$group": { "_id": "$" + field, "aggregation": { "$" + aggregation: "$" + field } } }
+    #]
     #Return the aggregated data
-    return coll.aggregate(pipeline) #Returns a cursor
+    response = dumps(list(coll.aggregate(pipeline)))
+    return response #Returns a cursor

@@ -12,10 +12,8 @@ def analytics(request):
 #Get
 #Returns the aggregated data on the chosen column
 #Parameters: field, aggregation
+#localhost:8000/analytics?field=precipitation&aggregation=max
 def get(request):
-    try:
-        json_data = request.GET
-        response = models.get_aggregation(json_data['field'], json_data['aggregation'])
-    except:
-        return HttpResponse("body must be json with field and aggregation")
+    parameters = request.GET
+    response = models.get_aggregation(parameters['field'], parameters['aggregation'])
     return JsonResponse(dumps(list(response)), safe=False)
