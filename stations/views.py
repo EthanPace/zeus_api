@@ -42,6 +42,7 @@ def post(request):
             response = models.create(json_data['new'])
     except:
         return HttpResponse("false")
+    models.station_trigger()
     return HttpResponse(response)
 #Put
 #Updates a station or stations
