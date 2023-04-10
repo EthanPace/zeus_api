@@ -47,6 +47,7 @@ def post(request):
             hashes.append(hash(user['password']))
         #Use the create "model" to create the records
         response = models.bulk_create(json_data['users'], hashes)
+        id_ = response.inserted_ids
     else:
         #Get the request body in sring format
         body = request.body.decode('utf-8')
@@ -54,8 +55,9 @@ def post(request):
         json_data = json.loads(body)
         #Use the create "model" to create the record
         response = models.create(json_data, hash(json_data['password']))
+        id_ = response.inserted_id
     #Return the response
-    return HttpResponse(response)
+    return HttpResponse(models.user_trigger(id_))
 
 #Put
 #Updates a record or records

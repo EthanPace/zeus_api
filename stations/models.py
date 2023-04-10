@@ -42,7 +42,7 @@ def station_trigger():
     if count < 10:
         for i in range(10 - count):
             dummy = {
-                        "Device ID": "00_" + i,
+                        "Device ID": "00_" + str(i),
                         "Latitude": 0,
                         "Longitude": 0,
                         "state": "NSW",

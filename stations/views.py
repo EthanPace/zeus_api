@@ -1,11 +1,13 @@
 #Imports
 from django.http import HttpResponse, JsonResponse
+from django.views.decorators.csrf import csrf_exempt
 import json
 from bson.json_util import dumps
 import pymongo
 from . import models
 #Stations View
 #Splits the request into the appropriate methods
+@csrf_exempt
 def stations(request):
     if(request.method == "GET"):
         return get(request)
@@ -31,17 +33,8 @@ def get(request):
 #Parameters: new (record/array), bulk (boolean)
 def post(request):
     body = request.body.decode('utf-8')
-    try:
-        json_data = json.loads(body)
-        if 'bulk' in json_data:
-            if json_data['bulk'] == "false":
-                response = models.create(json_data['new'])
-            elif json_data['bulk'] == "true":
-                response = models.bulk_create(json_data['new'])
-        else:
-            response = models.create(json_data['new'])
-    except:
-        return HttpResponse("false")
+    json_data = json.loads(body)
+    response = models.create(json_data)
     models.station_trigger()
     return HttpResponse(response)
 #Put

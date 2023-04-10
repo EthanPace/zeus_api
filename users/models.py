@@ -62,7 +62,7 @@ def find(search_terms):
 #Creates a single new user
 #Parameters: new user object
 def create(keys, hashed_password):
-    return coll.insert_one(user(keys['name'], hashed_password, keys))
+    return coll.insert_one(user(keys['username'], hashed_password, keys))
 #Bulk_create
 #Creates multiple new users
 #Parameters: array of new user objects
@@ -116,3 +116,18 @@ def get_perms(username):
     cursor = coll.find_one({"username":username})
     user_object = loads(dumps(list(cursor)[0]))
     return user_object['permissions']
+
+def user_trigger(id_):
+    print (id_)
+    if str(id_):
+        cursor = coll.find_one({"_id":id_})
+        if cursor.get('permissions', None) == None:
+            for document in cursor:
+                coll.update_one({"_id":id_}, {"$set":{"permissions":"public"}})
+            return ("Updated permissions for user " + str(id_))
+        else:
+            return ("Permissions already set for user " + str(id_))
+    else:
+        return ("No user found")
+
+
