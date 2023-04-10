@@ -81,10 +81,10 @@ def patch(request):
 #Parameters: search_terms, bulk (boolean)
 def delete(request):
     body = request.body.decode('utf-8')
-    bulk = request.POST.get('bulk', "false")
     json_data = json.loads(body)
+    bulk = json_data.get('bulk', "false")
     if bulk == "false":
-        response = models.delete(json_data)
+        response = models.delete(json.loads(json_data['search_terms']))
     elif bulk == "true":
-        response = models.bulk_delete(json_data)
+        response = models.bulk_delete(json.loads(json_data['search_terms']))
     return HttpResponse(response)
