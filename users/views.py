@@ -107,22 +107,8 @@ def authenticate(request):
         json_data = json.loads(body)
         print(hash(json_data['password']))
         response = models.authenticate(json_data['username'], hash(json_data['password']))
-        if response:
-            request.session['auth'] = True
-            request.session['perms'] = models.get_perms(json_data['username'])
-        else:
-            request.session['auth'] = False
-            request.session['perms'] = None
         #Return the response (true/false)
         return HttpResponse(response)
-#Logout
-#Allows a user to log out
-#Parameters: none
-@csrf_exempt
-def logout(request):
-    request.session['auth'] = False
-    request.session['perms'] = None
-    return HttpResponse("true")
 #Helper Functions
 #Hash
 #Hashes a string

@@ -72,9 +72,6 @@ def bulk_create(keys, hashed_passwords):
         curs = coll.insert_one(user(keys[i]['username'], hashed_passwords[i], keys[i]))
         cursors.append(curs)
     return cursors
-
-        
-        
 #Update
 #Updates a single user
 #Parameters: search terms, update object
@@ -109,14 +106,9 @@ def authenticate(username, password):
         return True
     else:
         return False
-#Get_Perms
-#Gets the permissions of a user
-#Parameters: username
-def get_perms(username):
-    cursor = coll.find_one({"username":username})
-    user_object = loads(dumps(list(cursor)[0]))
-    return user_object['permissions']
-
+#Trigger
+#Forces a user to have a permission level on creation
+#Parameters: id
 def user_trigger(id_):
     print (id_)
     if str(id_):
