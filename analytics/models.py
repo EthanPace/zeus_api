@@ -1,14 +1,16 @@
 from json import loads
 from bson.json_util import dumps
 import pymongo
-
+#TO DO:
+#    - Add working aggregation pipeline to the get_aggregation function
+#    - Clear out comments and unused code
 #Analytics:
 #		- Tasks:
-#			- Find the maximum precipitation recorded in the last 5 years (single)			
+#			- Find the maximum precipitation recorded in the last 5 years (single) -- TO DO		
 #		- Methods: 
 #			- Get
-#				- Input JSON: {field/column, aggregation}
-#				- Output JSON {the aggregated data on the chosen column}
+#				- Input JSON: {field/column, aggregation} -- TO DO
+#				- Output JSON {the aggregated data on the chosen column} -- TO DO
 
 client = pymongo.MongoClient("mongodb+srv://testUser:testPassword@nasadata.dpq7x0s.mongodb.net/test")
 db = client['weatherDataDB']

@@ -12,7 +12,7 @@ def analytics(request):
 #Get
 #Returns the aggregated data on the chosen column
 #Parameters: field, aggregation
-#localhost:8000/analytics?field=precipitation&aggregation=max
+#[localhost:8000/analytics?field=precipitation&aggregation=max]
 def get(request):
     parameters = request.GET
     response = models.get_aggregation(parameters['field'], parameters['aggregation'])
