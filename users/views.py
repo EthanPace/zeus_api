@@ -88,8 +88,10 @@ def put(request):
 #[localhost:8000/users?bulk=(true/false)] {"search_terms": {(key):(value)}}
 def delete(request):
     body = request.body.decode('utf-8')
+    print("Body:", body)
     bulk = request.POST.get('bulk', "false")
     json_data = json.loads(body)
+    print("json_data:", json_data)
     if bulk == "false":
         response = models.delete(json_data)
     elif bulk == "true":

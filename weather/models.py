@@ -15,9 +15,11 @@ import pymongo
 # 			- GET:
 # 				- Input JSON: {} -- DONE
 # 				- Output JSON {Top 10 results} -- DONE
-				
-# 				- Input JSON: {Search terms} -- TO DO
-# 				- Output JSON {Result(s)} -- TO DO		
+# 			    - For testing: localhost:8000/weather		
+# 		
+# 				- Input JSON: {Search terms} -- DONE
+# 				- Output JSON {Result(s)} -- DONE
+# 			    - For testing: localhost:8000/weather?time=Now&device_id=dlb_atm41_5282&limit=6
 
 client = pymongo.MongoClient("mongodb+srv://testUser:testPassword@nasadata.dpq7x0s.mongodb.net/test")
 db = client['weatherDataDB']

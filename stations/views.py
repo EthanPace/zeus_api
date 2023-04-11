@@ -17,6 +17,8 @@ def stations(request):
         return put(request)
     elif(request.method == "DELETE"):
         return delete(request)
+    elif(request.method == "PATCH"):
+        return patch(request)
 #Get
 #Gets a station or stations
 #Parameters: limit (int)
@@ -39,6 +41,7 @@ def post(request):
     response = models.create(json_data)
     models.station_trigger()
     return HttpResponse(response)
+
 #Put
 #Updates a station or stations
 #Parameters: search_terms, new (record/array), bulk (boolean)
@@ -57,6 +60,29 @@ def put(request):
     except:
         return HttpResponse("false")
     return HttpResponse(response)
+
+#Patch
+#Updates a station or stations
+#Parameters: search_terms, new (record/array), bulk (boolean)
+#[localhost:8000/stations] {"bulk":(true/false), "search_terms": {(key): (value)}, "new": {(key): (value)}}
+# Example: localhost:8000/stations
+#    {"bulk":"false", "search_terms": {"$oid": "64251a6bc0bde0d5eea40532"}, "new": {"Longitude": "-83.3792"}}
+
+def patch(request):
+    body = request.body.decode('utf-8')
+    try:
+        json_data = json.loads(body)
+        if 'bulk' in json_data:
+            if json_data['bulk'] == "false":
+                response = models.update(json_data['search_terms'], json_data['new'])
+            elif json_data['bulk'] == "true":
+                response = models.bulk_update(json_data['search_terms'], json_data['new'])
+        else:
+            response = models.update(json_data['search_terms'], json_data['new'])
+    except:
+        return HttpResponse("false")
+    return HttpResponse(response)
+    
 #Delete
 #Deletes a station or stations
 #Parameters: search_terms, bulk (boolean)
@@ -75,3 +101,4 @@ def delete(request):
     except:
         return HttpResponse("false")
     return HttpResponse(response)
+
