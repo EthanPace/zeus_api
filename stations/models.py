@@ -1,17 +1,21 @@
 from json import loads
 import pymongo
-
+#TO DO:
+#   - put and delete methods in the views.py file are outdated and need to be updated to the new methods (weathers/views.py)
+#   - Test update a specific weather station longitude and latitude (single) (and screencap the result)
+#   - Remove the long comment (below)
+#   - Check that all the methods are standardised between files (more important for this one)
 # Stations:
 # 		- Tasks:
-# 			- Insert a new weather station (single)
-# 			- Update a specific weather station longitude and latitude (single)			
+# 			- Insert a new weather station (single) -- DONE
+# 			- Update a specific weather station longitude and latitude (single) -- UNTESTED	
 # 		- Methods: 			
 # 			- Post:			
-# 				- Input JSON: {new weather station}
-# 				- Output JSON: {success / fail}	
+# 				- Input JSON: {new weather station} -- DONE
+# 				- Output JSON: {success / fail}	-- DONE
 # 			- PATCH:
-# 				- Input JSON: {weather station & new values}
-# 				- Output JSON: {success / fail}
+# 				- Input JSON: {weather station & new values} -- UNSURE
+# 				- Output JSON: {success / fail} -- UNSURE
 # 		- Triggers:
 # 			- If there are not enough weather station per state, add dummy data		 
 

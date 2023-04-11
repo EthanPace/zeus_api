@@ -20,6 +20,7 @@ def stations(request):
 #Get
 #Gets a station or stations
 #Parameters: limit (int)
+#[localhost:8000/stations?limit=(limit)]
 def get(request):
     g = request.GET
     if 'limit' in g:
@@ -31,6 +32,7 @@ def get(request):
 #Post
 #Creates a new station or stations
 #Parameters: new (record/array), bulk (boolean)
+#[localhost:8000/stations] {"new": {(key): (value)}}
 def post(request):
     body = request.body.decode('utf-8')
     json_data = json.loads(body)
@@ -40,6 +42,7 @@ def post(request):
 #Put
 #Updates a station or stations
 #Parameters: search_terms, new (record/array), bulk (boolean)
+#[localhost:8000/stations] {"bulk":(true/false), "search_terms": {(key): (value)}, "new": {(key): (value)}}
 def put(request):
     body = request.body.decode('utf-8')
     try:
@@ -57,6 +60,7 @@ def put(request):
 #Delete
 #Deletes a station or stations
 #Parameters: search_terms, bulk (boolean)
+#[localhost:8000/stations/?bulk=true] {"search_terms": {(key): (value)}}
 def delete(request):
     body = request.body.decode('utf-8')
     try:
