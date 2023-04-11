@@ -20,6 +20,7 @@ def users(request):
 #Get
 #Returns ten records
 #Parameters: none
+#[localhost:8000/users/]
 def get(request):
     #Use the get "model" to get the records
     cursor = models.get(10)
@@ -30,6 +31,7 @@ def get(request):
 #Post
 #Creates a new record or records
 #Parameters: new (record/array), bulk (boolean)
+#[localhost:8000/users/] {"bulk":"true/false", "users": [{"username":"(username)", "password":"(password)"}, {"username":"(username)", "password":"(password)"}]}
 def post(request):
     #Get the request body in sring format
     body = request.body.decode('utf-8')
@@ -62,6 +64,7 @@ def post(request):
 #Put
 #Updates a record or records
 #Parameters: search_terms, new (record/array), bulk (boolean)
+#[localhost:8000/users/] {"bulk":"true/false", "search_terms": {(key):(value)}, "new": {(key):(value)}}
 def put(request):
     #Get the request body in sring format
     body = request.body.decode('utf-8')
@@ -82,6 +85,7 @@ def put(request):
 #Delete
 #Deletes a record or records
 #Parameters: search_terms, bulk (boolean)
+#[localhost:8000/users?bulk=(true/false)] {"search_terms": {(key):(value)}}
 def delete(request):
     body = request.body.decode('utf-8')
     bulk = request.POST.get('bulk', "false")
@@ -94,6 +98,7 @@ def delete(request):
 #Authenticate
 #Allows a user to log in
 #Parameters: username, password
+#[localhost:8000/users/auth] {"username":"(username)", "password":"(password)"}
 @csrf_exempt
 def authenticate(request):
     if request.method == "GET":

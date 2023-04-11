@@ -1,7 +1,13 @@
 from json import loads
 from bson.json_util import dumps
 import pymongo
-
+# TO DO:
+#     - Test delete functionality, singular and bulk [localhost:8000/users?bulk=(true/false)] {"search_terms": {"username": "(username)"}}
+#     - Test update functionality, singular and bulk [localhost:8000/users/] {"bulk":"true/false", "search_terms": {(key):(value)}, "new": {(key):(value)}}
+#     - Test authentication functionality [localhost:8000/users/auth] {"username":"(username)", "password":"(password)"}
+#     - Add trigger to Atlas to update last logged in field
+#     - Remove long comment in this file (below)
+#     - Check that methods are standardized across apps (least important)
 # Users:
 # 		- Tasks:
 # 			- Insert a new user (single) -- DONE
