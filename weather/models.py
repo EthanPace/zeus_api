@@ -5,27 +5,19 @@ import pymongo
 
 # Weather:
 # 		- Tasks:
-# 			- Insert new fields to record the temperature information in Fahrenheit (6 fields) (multiple)
-# 			- Find the temperature, atmospheric pressure, radiation and precipitation recorded by a specific station at a given date and time (hour) (multiple)
-# 			- Create a query that includes an index key		
+# 			- Insert new fields to record the temperature information in Fahrenheit (6 fields) (multiple) -- DONE
+# 			- Find the temperature, atmospheric pressure, radiation and precipitation recorded by a specific station at a given date and time (hour) (multiple) -- TO DO (Can't get it to search, only to limit)
+# 			- Create a query that includes an index key -- TO DO (No clue what this means)
 # 		- Methods: 
 # 			- PUT:
-# 				- Input JSON: {6 different object ids}
-# 				- Output JSON {success / fail}
+# 				- Input JSON: {6 different object ids} -- DONE
+# 				- Output JSON {success / fail} -- DONE
 # 			- GET:
-# 				- Input JSON: {}
-# 				- Output JSON {Top 10 results}
+# 				- Input JSON: {} -- DONE
+# 				- Output JSON {Top 10 results} -- DONE
 				
-# 				- Input JSON: {Search terms}
-# 				- Output JSON {Result(s)}	
-
-# Analytics:
-# 		- Tasks:
-# 			- Find the maximum precipitation recorded in the last 5 years (single)			
-# 		- Methods: 
-# 			- Get
-# 				- Input JSON: {field/column, aggregation}
-# 				- Output JSON {the aggregated data on the chosen column}		
+# 				- Input JSON: {Search terms} -- TO DO
+# 				- Output JSON {Result(s)} -- TO DO		
 
 client = pymongo.MongoClient("mongodb+srv://testUser:testPassword@nasadata.dpq7x0s.mongodb.net/test")
 db = client['weatherDataDB']
