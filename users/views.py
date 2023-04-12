@@ -5,6 +5,7 @@ import json
 from bson.json_util import dumps
 from . import models
 from hashlib import sha256
+
 #User View
 #Splits the request into the appropriate methods
 @csrf_exempt
@@ -17,6 +18,7 @@ def users(request):
         return put(request)
     elif(request.method == "DELETE"):
         return delete(request)
+    
 #Get
 #Returns ten records
 #Parameters: none
@@ -28,6 +30,7 @@ def get(request):
     response = dumps(list(cursor))
     #Return the response
     return JsonResponse(response, safe=False)
+
 #Post
 #Creates a new record or records
 #Parameters: new (record/array), bulk (boolean)
@@ -61,6 +64,7 @@ def post(request):
     #Return the response
     return HttpResponse(models.user_trigger(id_))
 
+'''
 #Put
 #Updates a record or records
 #Parameters: search_terms, new (record/array), bulk (boolean)
@@ -70,6 +74,7 @@ def put(request):
     body = request.body.decode('utf-8')
     try: #Try to parse the body as JSON
         json_data = json.loads(body)
+        print(json_data)
         #Check if the request is a bulk operation
         if 'bulk' in json_data:
             if json_data['bulk'] == "false": #If not bulk, update one record
@@ -82,6 +87,32 @@ def put(request):
         return JsonResponse({'result':'false'})
     #Return the response
     return HttpResponse(response)
+'''
+
+def put(request):
+    # Check content-type header
+    content_type = request.META.get('CONTENT_TYPE')
+    if content_type != 'application/json':
+        return JsonResponse({'result': 'false'})
+
+    # Get the request body in string format
+    body = request.body.decode('utf-8')
+    try: #Try to parse the body as JSON
+        json_data = json.loads(body)
+        print(json_data)
+        #Check if the request is a bulk operation
+        if 'bulk' in json_data:
+            if json_data['bulk'] == "false": #If not bulk, update one record
+                response = models.update(json_data['search_terms'], json_data['new'])
+            elif json_data['bulk'] == "true": #If bulk, update multiple records
+                response = models.bulk_update(json_data['search_terms'], json_data['new'])
+        else: #By default, update one record
+            response = models.update(json_data['search_terms'], json_data['new'])
+    except: #If the body is not JSON, return false
+        return JsonResponse({'result':'false'})
+    #Return the response
+    return HttpResponse(response)
+
 #Delete
 #Deletes a record or records
 #Parameters: search_terms, bulk (boolean)
@@ -97,6 +128,7 @@ def delete(request):
     elif bulk == "true":
         response = models.bulk_delete(json_data)
     return HttpResponse(response)
+
 #Authenticate
 #Allows a user to log in
 #Parameters: username, password
@@ -116,6 +148,7 @@ def authenticate(request):
         response = models.authenticate(json_data['username'], hash(json_data['password']))
         #Return the response (true/false)
         return HttpResponse(response)
+    
 #Helper Functions
 #Hash
 #Hashes a string
