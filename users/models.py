@@ -45,7 +45,7 @@ import pymongo
 # Create your models here.
 client = pymongo.MongoClient("mongodb+srv://testUser:testPassword@nasadata.dpq7x0s.mongodb.net/test")
 db = client['weatherDataDB']
-coll = db['employees']
+coll = db['users']
 
 #User
 #"Model" for the user object
@@ -53,8 +53,8 @@ def user(username, password, other_keys):
     new_record = {}
     for key in other_keys:
         new_record[key] = other_keys[key]
-    new_record['username'] = username
-    new_record['password'] = password
+    new_record['Username'] = username
+    new_record['Password'] = password
     return new_record
 
 #Get
@@ -73,7 +73,7 @@ def find(search_terms):
 #Creates a single new user
 #Parameters: new user object
 def create(keys, hashed_password):
-    return coll.insert_one(user(keys['username'], hashed_password, keys))
+    return coll.insert_one(user(keys['Username'], hashed_password, keys))
 
 #Bulk_create
 #Creates multiple new users
@@ -81,7 +81,7 @@ def create(keys, hashed_password):
 def bulk_create(keys, hashed_passwords):
     cursors = []
     for i in range(len(keys)):
-        curs = coll.insert_one(user(keys[i]['username'], hashed_passwords[i], keys[i]))
+        curs = coll.insert_one(user(keys[i]['Username'], hashed_passwords[i], keys[i]))
         cursors.append(curs)
     return cursors
 
@@ -94,12 +94,17 @@ def update(search_terms, new):
 #Bulk_update
 #Updates multiple users
 #Parameters: search terms, update array
-def bulk_update(search_terms, new_array):
-    return_list = []
-    for new in new_array:
-        for search_term in search_terms:
-            return_list += coll.update_one(search_term, user(new))
-    return return_list
+def bulk_update(query, update, limit = None):
+    if limit == None:
+        return coll.update_many(query, update)
+    else:
+        try:
+            cursor = coll.find(query).limit(limit)
+            for document in cursor:
+                coll.update_one({"_id":document["_id"]}, update)
+            return {"results": "success"}
+        except:
+            return {"results": "fail"}
 
 #Delete
 #Deletes a single user
@@ -117,7 +122,7 @@ def bulk_delete(search_terms):
 #Authenticates a user
 #Parameters: username, password
 def authenticate(username, password):
-    exists = coll.count_documents({"username":username,"password":password})
+    exists = coll.count_documents({"Username":username,"Password":password})
     print(exists)
     if exists > 0:
         return True

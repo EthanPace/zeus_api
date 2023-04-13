@@ -49,7 +49,7 @@ def post(request):
         #Hash the passwords
         hashes = []
         for user in json_data['users']:
-            hashes.append(hash(user['password']))
+            hashes.append(hash(user['Password']))
         #Use the create "model" to create the records
         response = models.bulk_create(json_data['users'], hashes)
         id_ = response.inserted_ids
@@ -59,15 +59,36 @@ def post(request):
         #Parse the body as JSON
         json_data = json.loads(body)
         #Use the create "model" to create the record
-        response = models.create(json_data, hash(json_data['password']))
+        response = models.create(json_data, hash(json_data['Password']))
         id_ = response.inserted_id
     #Return the response
     return HttpResponse(models.user_trigger(id_))
 
+'''
 #Put
 #Updates a record or records
-#Parameters: search_terms (record/array), new (record/array), bulk (boolean)
-#[localhost:8000/users/] {}
+#Parameters: search_terms, new (record/array), bulk (boolean)
+#[localhost:8000/users/] {"bulk":"true/false", "search_terms": {(key):(value)}, "new": {(key):(value)}}
+def put(request):
+    #Get the request body in sring format
+    body = request.body.decode('utf-8')
+    try: #Try to parse the body as JSON
+        json_data = json.loads(body)
+        print(json_data)
+        #Check if the request is a bulk operation
+        if 'bulk' in json_data:
+            if json_data['bulk'] == "false": #If not bulk, update one record
+                response = models.update(json_data['search_terms'], json_data['new'])
+            elif json_data['bulk'] == "true": #If bulk, update multiple records
+                response = models.bulk_update(json_data['search_terms'], json_data['new'])
+        else: #By default, update one record
+            response = models.update(json_data['search_terms'], json_data['new'])
+    except: #If the body is not JSON, return false
+        return JsonResponse({'result':'false'})
+    #Return the response
+    return HttpResponse(response)
+'''
+'''
 def put(request):
     # Check content-type header
     content_type = request.META.get('CONTENT_TYPE')
@@ -91,6 +112,37 @@ def put(request):
         return JsonResponse({'result':'false'})
     #Return the response
     return HttpResponse(response)
+'''
+
+#Put
+#Updates a record or records
+def put(request):
+    body = request.body.decode('utf-8')
+    json_data = json.loads(body)
+    #Get bulk parameter
+    bulk = json_data.get('bulk', "false")
+    #Check if this is a bulk update
+    if bulk == "false":
+        response = models.update({json_data['search_field']:json_data['search_term']}, {'$set':{json_data['update_field']:json_data['update_value']}})
+    elif bulk == "true":
+        if 'limit' in json_data:
+            response = models.bulk_update({json_data['search_field']:json_data['search_term']}, {'$set':{json_data['update_field']:json_data['update_value']}}, int(json_data['limit']))
+        else:
+            response = models.bulk_update({json_data['search_field']:json_data['search_term']}, {'$set':{json_data['update_field']:json_data['update_value']}})
+    return HttpResponse(response)
+#Delete
+#Deletes a record or records
+#Parameters: search_terms, bulk (boolean)
+def delete(request):
+    body = request.body.decode('utf-8')
+    json_data = json.loads(body)
+    bulk = json_data.get('bulk', "false")
+    if bulk == "false":
+        response = models.delete(json.loads(json_data['search_terms']))
+    elif bulk == "true":
+        response = models.bulk_delete(json.loads(json_data['search_terms']))
+    return HttpResponse(response)
+
 #Delete
 #Deletes a record or records
 #Parameters: search_terms, bulk (boolean)
@@ -113,13 +165,19 @@ def delete(request):
 #[localhost:8000/users/auth] {"username":"(username)", "password":"(password)"}
 @csrf_exempt
 def authenticate(request):
-    #Get the request body in sring format
-    body = request.body.decode('utf-8')
-    json_data = json.loads(body)
-    print(hash(json_data['password']))
-    response = models.authenticate(json_data['username'], hash(json_data['password']))
-    #Return the response (true/false)
-    return HttpResponse(response)
+    if request.method == "GET":
+        if request.session['auth']:
+            return HttpResponse("true")
+        else:
+            return HttpResponse("false")
+    else:
+        #Get the request body in sring format
+        body = request.body.decode('utf-8')
+        json_data = json.loads(body)
+        print(hash(json_data['Password']))
+        response = models.authenticate(json_data['Username'], hash(json_data['Password']))
+        #Return the response (true/false)
+        return HttpResponse(response)
     
 #Helper Functions
 #Hash
