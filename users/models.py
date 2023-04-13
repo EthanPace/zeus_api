@@ -24,7 +24,15 @@ import pymongo
 # 				- Output JSON: {success / fail} -- DONE
 				
 			
-# 			- PUT: -- NOT CURRENTLY WORKING, DOES NOT FIND 'bulk' IN JSON FOR SOME REASON
+# 			- PUT: -- 
+# 				- {
+#   "bulk":"true",
+#   "search_field":"Role",
+#   "search_term":"User",
+#   "update_field":"Role",
+#   "update_value":"Manager",
+#   "limit":2
+#}
 # 				- Input JSON: {new access levels for at least 2 users (in the same query)} -- BROKEN
 # 				- Output JSON: {success / fail} -- DONE
 # 			- DELETE:
