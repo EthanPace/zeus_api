@@ -77,5 +77,5 @@ def bulk_update(query, update, limit = None):
 def delete(search_terms):
     return coll.delete_one(search_terms)
 
-def bulk_delete(search_terms):
-    return coll.delete_many(search_terms)
+def bulk_delete(search_terms, limit):
+    return coll.delete_many(search_terms).limit(limit)

@@ -79,7 +79,7 @@ def delete(request):
         if bulk == "false":
             response = models.delete(json_data['search_terms'])
         elif bulk == "true":
-            response = models.bulk_delete(json_data['search_terms'])
+            response = models.bulk_delete(json_data['search_terms'], int(json_data.get('limit', 1)))
     return HttpResponse(response.deleted_count)
 
 '''
