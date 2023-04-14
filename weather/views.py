@@ -5,6 +5,7 @@ from django.views.decorators.http import require_http_methods
 import json
 from bson.json_util import dumps
 from . import models
+from bson.objectid import ObjectId
 #Weather View
 #Splits the request into the appropriate methods
 @csrf_exempt
@@ -85,7 +86,7 @@ def delete(request):
     print("Delete chosen")
     query = request.GET
     if 'oid' in query:
-        result = models.delete({'_id': query.get('oid')})
+        result = models.delete({'_id': ObjectId(query.get('oid'))})
         response = {'deleted_count': result.deleted_count}
     else:
         response = {'message': 'Please provide an oid to delete.'}
