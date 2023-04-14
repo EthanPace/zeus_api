@@ -34,7 +34,10 @@ def search(query):
     elif 'device_id' in query:
         device_id = query['device_id']
         return coll.find({"Device ID":device_id}).limit(int(query.get('limit', 10)))
-        
+    
+def page(pagesize, page):
+    return coll.find().skip(pagesize * (page - 1)).limit(pagesize)
+
 
 def create(new):
     return coll.insert_one(weather(new))
