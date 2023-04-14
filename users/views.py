@@ -20,27 +20,11 @@ def users(request):
     elif(request.method == "DELETE"):
         return delete(request)
 
-''' 
-#Get
-#Returns ten records
-#Parameters: none
-#[localhost:8000/users/]
-def get(request):
-    #Use the get "model" to get the records
-    cursor = models.get(10)
-    #Convert the cursor to a list, then to JSON
-    response = dumps(list(cursor))
-    #Return the response
-    return JsonResponse(response, safe=False)
-'''
-
 #Get
 #Returns ten records (default), or a specified number of records, or a specific record based on search terms
 #Parameters: none
 def get(request):
     query = request.GET
-    #if 'time' in query or 'device_id' in query:
-    #    cursor = models.search(query)
     if 'limit' in query or 'oid' in query:
         cursor = models.find(query.get('oid', ""), int(query.get('limit', 10)))
     else:
@@ -83,17 +67,7 @@ def post(request):
 
 #Put
 #Updates a record or records
-'''
-Use the URL localhost:8000/users/ and following JSON to test:
-{
-	"bulk":"true",  
-    "search_field":"Role",   
-    "search_term":"User",   
-    "update_field":"Role",   
-    "update_value":"Manager",   
-    "limit":2
-}
-'''
+#[localhost:8000/users/] {"bulk":"true", "search_field":"Role", "search_term":"Manager", "update_field":"Role", "update_value":"Admin", "limit":1}
 def put(request):
     body = request.body.decode('utf-8')
     json_data = json.loads(body)
@@ -108,43 +82,10 @@ def put(request):
         else:
             response = models.bulk_update({json_data['search_field']:json_data['search_term']}, {'$set':{json_data['update_field']:json_data['update_value']}})
     return HttpResponse(response)
-#Delete
-#Deletes a record or records
-#Parameters: search_terms, bulk (boolean)
-#[localhost:8000/users?bulk=(true/false)] {"search_terms": {(key):(value)}}
-'''
-def delete(request):
-    print("delete chosen")
-    body = request.body.decode('utf-8')
-    json_data = json.loads(body)
-    bulk = json_data.get('bulk', "false")
-    if bulk == "false":
-        response = models.delete(json.loads(json_data['search_terms']))
-        print("false")
-    elif bulk == "true":
-        response = models.bulk_delete(json.loads(json_data['search_terms']))
-        print("true")
-    else: 
-        print("Delete did not work")
-    return HttpResponse(response)
-'''
-#Delete
-#Deletes a record or records
-'''
-@require_http_methods(["DELETE"])
-def delete(request):
-    print("Delete chosen")
-    query = request.GET
-    if 'oid' in query:
-        result = models.delete({'_id': ObjectId(query.get('oid'))})
-        print(ObjectId(query.get('oid')))
-        response = {'deleted_count': result.deleted_count}
-    else:
-        response = {'message': 'Please provide an oid to delete.'}
-    return JsonResponse(response, safe=False)
-'''
 
-@require_http_methods(["DELETE"])
+#Delete
+#Deletes a record or records
+#Parameters: oid (record id), bulk (boolean), search_terms (dictionary)
 def delete(request):
     body = request.body.decode('utf-8')
     json_data = json.loads(body)
