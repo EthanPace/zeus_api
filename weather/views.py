@@ -5,6 +5,7 @@ import json
 from bson.json_util import dumps
 from . import models
 from bson.objectid import ObjectId
+
 #Weather View
 #Splits the request into the appropriate methods
 @csrf_exempt

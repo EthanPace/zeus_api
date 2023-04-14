@@ -7,6 +7,7 @@ from . import models
 from hashlib import sha256
 from django.views.decorators.http import require_http_methods
 from bson.objectid import ObjectId
+
 #User View
 #Splits the request into the appropriate methods
 @csrf_exempt
@@ -19,6 +20,8 @@ def users(request):
         return put(request)
     elif(request.method == "DELETE"):
         return delete(request)
+    elif(request.method == "OPTIONS"):
+        return options(request)
 
 #Get
 #Returns ten records (default), or a specified number of records, or a specific record based on search terms
@@ -99,26 +102,25 @@ def delete(request):
             response = models.bulk_delete(json_data['search_terms'])
     return HttpResponse(response.deleted_count)
 
+#Options
+#Returns the allowed methods
+def options(request):
+    return HttpResponse("GET, POST, PUT, DELETE, OPTIONS")
+
 #Authenticate
 #Allows a user to log in
 #Parameters: username, password
 #[localhost:8000/users/auth] {"username":"(username)", "password":"(password)"}
 @csrf_exempt
 def authenticate(request):
-    if request.method == "GET":
-        if request.session['auth']:
-            return HttpResponse("true")
-        else:
-            return HttpResponse("false")
-    else:
-        #Get the request body in sring format
-        body = request.body.decode('utf-8')
-        json_data = json.loads(body)
-        print(hash(json_data['Password']))
-        response = models.authenticate(json_data['Username'], hash(json_data['Password']))
-        #Return the response (true/false)
-        return HttpResponse(response)
-    
+    #Get the request body in sring format
+    body = request.body.decode('utf-8')
+    json_data = json.loads(body)
+    print(hash(json_data['Password']))
+    response = models.authenticate(json_data['Username'], hash(json_data['Password']))
+    #Return the response (true/false)
+    return HttpResponse(response)
+
 #Helper Functions
 #Hash
 #Hashes a string

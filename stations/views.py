@@ -20,6 +20,8 @@ def stations(request):
         return delete(request)
     elif(request.method == "PATCH"):
         return patch(request)
+    elif(request.method == "OPTIONS"):
+        return options(request)
 #Get
 #Gets a station or stations
 #Parameters: limit (int)
@@ -68,7 +70,6 @@ def put(request):
 #[localhost:8000/stations] {"bulk":(true/false), "search_terms": {(key): (value)}, "new": {(key): (value)}}
 # Example: localhost:8000/stations
 #    {"bulk":"false", "search_terms": {"$oid": "64251a6bc0bde0d5eea40532"}, "new": {"Longitude": "-83.3792"}}
-
 def patch(request):
     body = request.body.decode('utf-8')
     try:
@@ -101,3 +102,7 @@ def delete(request):
             response = models.bulk_delete(json_data['search_terms'])
     return HttpResponse(response.deleted_count)
 
+#Options
+#Returns the options for the stations view
+def options(request):
+    return HttpResponse("GET, POST, PUT, DELETE, PATCH, OPTIONS")

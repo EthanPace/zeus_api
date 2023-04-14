@@ -9,6 +9,8 @@ from . import models
 def analytics(request):
     if(request.method == "GET"):
         return get(request)
+    elif (request.method == "OPTIONS"):
+        return options(request)
 #Get
 #Returns the aggregated data on the chosen column
 #Parameters: field, aggregation
@@ -16,3 +18,8 @@ def analytics(request):
 def get(request):
     response = models.get_max()
     return JsonResponse(dumps(list(response)), safe=False)
+
+#Options
+#Returns the allowed methods
+def options(request):
+    return HttpResponse("GET, OPTIONS")
