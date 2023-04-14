@@ -13,9 +13,9 @@ from bson.objectid import ObjectId
 # Users:
 # 		- Tasks:
 # 			- Insert a new user (single) -- DONE
-# 			- Delete a user (single) -- BROKEN (Gives 301 code and doesnt delete)
-# 			- Delete multiple users (multiple) -- BROKEN (Gives 301 code and doesnt delete)
-# 			- Update access level for at least two users in the same query (multiple) -- UNSURE
+# 			- Delete a user (single) -- DONE
+# 			- Delete multiple users (multiple) -- TO DO
+# 			- Update access level for at least two users in the same query (multiple) -- DONE
 			
 # 		- Methods: 			
 # 			- Post:
@@ -30,9 +30,9 @@ from bson.objectid import ObjectId
 # 				- Input JSON: {new access levels for at least 2 users (in the same query)} -- DONE
 # 				- Output JSON: {success / fail} -- DONE
 # 			- DELETE:
-# 				- Input JSON: {Single user} -- NOT WORKING, GIVES 301 CODE AND DOESNT DELETE
+# 				- Input JSON: {Single user} -- DONE
 					
-# 				- Input JSON: {Multiple users) -- TO DO (BROKEN)
+# 				- Input JSON: {Multiple users) -- TO DO
 
 # 		- Trigger:
 # 			- Configure last logged in trigger in atlas -- DONE

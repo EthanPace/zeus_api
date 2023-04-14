@@ -63,6 +63,7 @@ def put(request):
         else:
             response = models.bulk_update({json_data['search_field']:json_data['search_term']}, {'$set':{json_data['update_field']:json_data['update_value']}})
     return HttpResponse(response)
+
 #Delete
 #Deletes a record or records
 #Parameters: search_terms, bulk (boolean)
@@ -78,7 +79,6 @@ def delete(request):
         response = models.bulk_delete(json.loads(json_data['search_terms']))
     return HttpResponse(response)
 '''
-
 #Delete
 #Deletes a record or records
 @require_http_methods(["DELETE"])
@@ -87,6 +87,7 @@ def delete(request):
     query = request.GET
     if 'oid' in query:
         result = models.delete({'_id': ObjectId(query.get('oid'))})
+        print(ObjectId(query.get('oid')))
         response = {'deleted_count': result.deleted_count}
     else:
         response = {'message': 'Please provide an oid to delete.'}

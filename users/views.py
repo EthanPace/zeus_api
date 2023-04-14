@@ -5,7 +5,8 @@ import json
 from bson.json_util import dumps
 from . import models
 from hashlib import sha256
-
+from django.views.decorators.http import require_http_methods
+from bson.objectid import ObjectId
 #User View
 #Splits the request into the appropriate methods
 @csrf_exempt
@@ -112,6 +113,7 @@ def put(request):
 #Deletes a record or records
 #Parameters: search_terms, bulk (boolean)
 #[localhost:8000/users?bulk=(true/false)] {"search_terms": {(key):(value)}}
+'''
 def delete(request):
     print("delete chosen")
     body = request.body.decode('utf-8')
@@ -126,6 +128,20 @@ def delete(request):
     else: 
         print("Delete did not work")
     return HttpResponse(response)
+'''
+#Delete
+#Deletes a record or records
+@require_http_methods(["DELETE"])
+def delete(request):
+    print("Delete chosen")
+    query = request.GET
+    if 'oid' in query:
+        result = models.delete({'_id': ObjectId(query.get('oid'))})
+        print(ObjectId(query.get('oid')))
+        response = {'deleted_count': result.deleted_count}
+    else:
+        response = {'message': 'Please provide an oid to delete.'}
+    return JsonResponse(response, safe=False)
 
 #Authenticate
 #Allows a user to log in
