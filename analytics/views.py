@@ -14,6 +14,5 @@ def analytics(request):
 #Parameters: field, aggregation
 #[localhost:8000/analytics?field=precipitation&aggregation=max]
 def get(request):
-    parameters = request.GET
-    response = models.get_aggregation(parameters['field'], parameters['aggregation'])
+    response = models.get_max()
     return JsonResponse(dumps(list(response)), safe=False)

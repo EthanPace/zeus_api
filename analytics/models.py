@@ -14,29 +14,14 @@ import pymongo
 
 client = pymongo.MongoClient("mongodb+srv://testUser:testPassword@nasadata.dpq7x0s.mongodb.net/test")
 db = client['weatherDataDB']
-coll = db['weatherData']
+coll = db['NSWWeatherData']
 
 #Get_aggregation
 #Returns the aggregated data on the chosen column
 #Parameters: field, aggregation
-def get_aggregation(field, aggregation):
-    if field == "precipitation":
-        field = "Precipitation mm/h"
-    #Aggregation pipeline
+def get_max():
     pipeline = [
-        {
-            "$group": {
-                "_id": "$your_grouping_field",
-                "max_precipitation": { "$max": "$Precipitation mm/s" }
-            }
-        }
+        {"$group": {"_id": "$Device ID", "maximum_precipitation": {"$max": "$Precipitation mm/h"}}},
+        {"$sort": {"max": -1}},
     ]
-    #[
-        #Filter out data before 2015
-        #{ "$match": { "Time": { "$gte": "2015-01-01T00:00:00+10:00" } } },
-        #Group by the aggregation
-        #{ "$group": { "_id": "$" + field, "aggregation": { "$" + aggregation: "$" + field } } }
-    #]
-    #Return the aggregated data
-    response = dumps(list(coll.aggregate(pipeline)))
-    return response #Returns a cursor
+    return coll.aggregate(pipeline)
