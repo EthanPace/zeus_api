@@ -67,17 +67,21 @@ def put(request):
 #Delete
 #Deletes a record or records
 #Parameters: search_terms, bulk (boolean)
-'''
+
 @require_http_methods(["DELETE"])
 def delete(request):
     body = request.body.decode('utf-8')
     json_data = json.loads(body)
-    bulk = json_data.get('bulk', "false")
-    if bulk == "false":
-        response = models.delete(json.loads(json_data['search_terms']))
-    elif bulk == "true":
-        response = models.bulk_delete(json.loads(json_data['search_terms']))
-    return HttpResponse(response)
+    if 'oid' in json_data:
+        response = models.delete({'_id': ObjectId(json_data['oid'])})
+    else:
+        bulk = json_data.get('bulk', "false")
+        if bulk == "false":
+            response = models.delete(json_data['search_terms'])
+        elif bulk == "true":
+            response = models.bulk_delete(json_data['search_terms'])
+    return HttpResponse(response.deleted_count)
+
 '''
 #Delete
 #Deletes a record or records
@@ -92,3 +96,4 @@ def delete(request):
     else:
         response = {'message': 'Please provide an oid to delete.'}
     return JsonResponse(response, safe=False)
+'''
