@@ -4,45 +4,7 @@ import pymongo
 from bson.objectid import ObjectId
 
 # TO DO:
-#     - Test delete functionality, singular and bulk [localhost:8000/users?bulk=(true/false)] {"search_terms": {"username": "(username)"}}
-#     - Test update functionality, singular and bulk [localhost:8000/users/] {"bulk":"true/false", "search_terms": {(key):(value)}, "new": {(key):(value)}}
-#     - Test authentication functionality [localhost:8000/users/auth] {"username":"(username)", "password":"(password)"}
-#     - Add trigger to Atlas to update last logged in field
-#     - Remove long comment in this file (below)
 #     - Check that methods are standardized across apps (least important)
-# Users:
-# 		- Tasks:
-# 			- Insert a new user (single) -- DONE
-# 			- Delete a user (single) -- DONE
-# 			- Delete multiple users (multiple) -- TO DO
-# 			- Update access level for at least two users in the same query (multiple) -- DONE
-			
-# 		- Methods: 			
-# 			- Post:
-# 				- Input JSON: {1 new user object} -- DONE
-# 				- Output JSON: {success / fail} -- DONE
-
-# 				- Input JSON: {Multiple new user object} -- DONE
-# 				- Output JSON: {success / fail} -- DONE
-				
-			
-# 			- PUT: -- 
-# 				- Input JSON: {new access levels for at least 2 users (in the same query)} -- DONE
-# 				- Output JSON: {success / fail} -- DONE
-# 			- DELETE:
-# 				- Input JSON: {Single user} -- DONE
-					
-# 				- Input JSON: {Multiple users) -- TO DO
-
-# 		- Trigger:
-# 			- Configure last logged in trigger in atlas -- DONE
-#           - Assign role to public if isn't admin or manager?	-- DONE	
-# 		- Secondary endpoint:
-# 			- Authenticate	
-# 				- Methods: 			
-# 					- GET: 
-# 						- Input JSON: {username + password} -- DONE
-# 						- Output JSON: {if authenticated}} -- DONE
 
 # Create your models here.
 client = pymongo.MongoClient("mongodb+srv://testUser:testPassword@nasadata.dpq7x0s.mongodb.net/test")

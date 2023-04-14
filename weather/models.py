@@ -3,23 +3,9 @@ from bson.json_util import dumps
 from bson.objectid import ObjectId
 import pymongo
 
-# Weather:
-# 		- Tasks:
-# 			- Insert new fields to record the temperature information in Fahrenheit (6 fields) (multiple) -- DONE
-# 			- Find the temperature, atmospheric pressure, radiation and precipitation recorded by a specific station at a given date and time (hour) (multiple) -- TO DO (Can't get it to search, only to limit)
-# 			- Create a query that includes an index key -- TO DO (No clue what this means)
-# 		- Methods: 
-# 			- PUT:
-# 				- Input JSON: {6 different object ids} -- DONE
-# 				- Output JSON {success / fail} -- DONE
-# 			- GET:
-# 				- Input JSON: {} -- DONE
-# 				- Output JSON {Top 10 results} -- DONE
-# 			    - For testing: localhost:8000/weather		
-# 		
-# 				- Input JSON: {Search terms} -- DONE
-# 				- Output JSON {Result(s)} -- DONE
-# 			    - For testing: localhost:8000/weather?time=Now&device_id=dlb_atm41_5282&limit=6
+# TO DO:
+#     - Check that methods are standardized across apps (least important)
+#    - Add OPTIONS method
 
 client = pymongo.MongoClient("mongodb+srv://testUser:testPassword@nasadata.dpq7x0s.mongodb.net/test")
 db = client['weatherDataDB']
