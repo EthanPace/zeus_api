@@ -18,7 +18,8 @@ def users(request):
         return put(request)
     elif(request.method == "DELETE"):
         return delete(request)
-    
+
+''' 
 #Get
 #Returns ten records
 #Parameters: none
@@ -30,6 +31,22 @@ def get(request):
     response = dumps(list(cursor))
     #Return the response
     return JsonResponse(response, safe=False)
+'''
+
+#Get
+#Returns ten records (default), or a specified number of records, or a specific record based on search terms
+#Parameters: none
+def get(request):
+    query = request.GET
+    #if 'time' in query or 'device_id' in query:
+    #    cursor = models.search(query)
+    if 'limit' in query or 'oid' in query:
+        cursor = models.find(query.get('oid', ""), int(query.get('limit', 10)))
+    else:
+        cursor = models.find("",10)
+    cursor_list = list(cursor)
+    json_data = dumps(cursor_list)
+    return JsonResponse(json_data, safe=False)
 
 #Post
 #Creates a new record or records
@@ -64,58 +81,19 @@ def post(request):
     #Return the response
     return HttpResponse(models.user_trigger(id_))
 
-'''
 #Put
 #Updates a record or records
-#Parameters: search_terms, new (record/array), bulk (boolean)
-#[localhost:8000/users/] {"bulk":"true/false", "search_terms": {(key):(value)}, "new": {(key):(value)}}
-def put(request):
-    #Get the request body in sring format
-    body = request.body.decode('utf-8')
-    try: #Try to parse the body as JSON
-        json_data = json.loads(body)
-        print(json_data)
-        #Check if the request is a bulk operation
-        if 'bulk' in json_data:
-            if json_data['bulk'] == "false": #If not bulk, update one record
-                response = models.update(json_data['search_terms'], json_data['new'])
-            elif json_data['bulk'] == "true": #If bulk, update multiple records
-                response = models.bulk_update(json_data['search_terms'], json_data['new'])
-        else: #By default, update one record
-            response = models.update(json_data['search_terms'], json_data['new'])
-    except: #If the body is not JSON, return false
-        return JsonResponse({'result':'false'})
-    #Return the response
-    return HttpResponse(response)
 '''
+Use the URL localhost:8000/users/ and following JSON to test:
+{
+	"bulk":"true",  
+    "search_field":"Role",   
+    "search_term":"User",   
+    "update_field":"Role",   
+    "update_value":"Manager",   
+    "limit":2
+}
 '''
-def put(request):
-    # Check content-type header
-    content_type = request.META.get('CONTENT_TYPE')
-    if content_type != 'application/json':
-        return JsonResponse({'result': 'false'})
-
-    # Get the request body in string format
-    body = request.body.decode('utf-8')
-    try: #Try to parse the body as JSON
-        json_data = json.loads(body)
-        print(json_data)
-        #Check if the request is a bulk operation
-        if 'bulk' in json_data:
-            if json_data['bulk'] == "false": #If not bulk, update one record
-                response = models.update(json_data['search_terms'], json_data['new'])
-            elif json_data['bulk'] == "true": #If bulk, update multiple records
-                response = models.bulk_update(json_data['search_terms'], json_data['new'])
-        else: #By default, update one record
-            response = models.update(json_data['search_terms'], json_data['new'])
-    except: #If the body is not JSON, return false
-        return JsonResponse({'result':'false'})
-    #Return the response
-    return HttpResponse(response)
-'''
-
-#Put
-#Updates a record or records
 def put(request):
     body = request.body.decode('utf-8')
     json_data = json.loads(body)
@@ -133,30 +111,20 @@ def put(request):
 #Delete
 #Deletes a record or records
 #Parameters: search_terms, bulk (boolean)
+#[localhost:8000/users?bulk=(true/false)] {"search_terms": {(key):(value)}}
 def delete(request):
+    print("delete chosen")
     body = request.body.decode('utf-8')
     json_data = json.loads(body)
     bulk = json_data.get('bulk', "false")
     if bulk == "false":
         response = models.delete(json.loads(json_data['search_terms']))
+        print("false")
     elif bulk == "true":
         response = models.bulk_delete(json.loads(json_data['search_terms']))
-    return HttpResponse(response)
-
-#Delete
-#Deletes a record or records
-#Parameters: search_terms, bulk (boolean)
-#[localhost:8000/users?bulk=(true/false)] {"search_terms": {(key):(value)}}
-def delete(request):
-    body = request.body.decode('utf-8')
-    print("Body:", body)
-    bulk = request.POST.get('bulk', "false")
-    json_data = json.loads(body)
-    print("json_data:", json_data)
-    if bulk == "false":
-        response = models.delete(json_data)
-    elif bulk == "true":
-        response = models.bulk_delete(json_data)
+        print("true")
+    else: 
+        print("Delete did not work")
     return HttpResponse(response)
 
 #Authenticate

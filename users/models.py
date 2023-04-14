@@ -1,6 +1,8 @@
 from json import loads
 from bson.json_util import dumps
 import pymongo
+from bson.objectid import ObjectId
+
 # TO DO:
 #     - Test delete functionality, singular and bulk [localhost:8000/users?bulk=(true/false)] {"search_terms": {"username": "(username)"}}
 #     - Test update functionality, singular and bulk [localhost:8000/users/] {"bulk":"true/false", "search_terms": {(key):(value)}, "new": {(key):(value)}}
@@ -25,15 +27,7 @@ import pymongo
 				
 			
 # 			- PUT: -- 
-# 				- {
-#   "bulk":"true",
-#   "search_field":"Role",
-#   "search_term":"User",
-#   "update_field":"Role",
-#   "update_value":"Manager",
-#   "limit":2
-#}
-# 				- Input JSON: {new access levels for at least 2 users (in the same query)} -- BROKEN
+# 				- Input JSON: {new access levels for at least 2 users (in the same query)} -- DONE
 # 				- Output JSON: {success / fail} -- DONE
 # 			- DELETE:
 # 				- Input JSON: {Single user} -- NOT WORKING, GIVES 301 CODE AND DOESNT DELETE
@@ -74,9 +68,14 @@ def get(limit):
 #Find
 #Returns one record that matches the search terms
 #Parameters: search terms
-def find(search_terms):
-    return coll.find_one(search_terms)
-
+#def find(search_terms):
+#    return coll.find_one(search_terms)
+def find(search = "", limit = 10):
+    if search == "":
+        return coll.find().limit(limit)
+    else:
+        return coll.find({"_id":ObjectId(search)}).limit(limit)
+    
 #Create
 #Creates a single new user
 #Parameters: new user object

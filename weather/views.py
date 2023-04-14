@@ -1,6 +1,7 @@
 #Imports
 from django.http import HttpResponse, JsonResponse
 from django.views.decorators.csrf import csrf_exempt
+from django.views.decorators.http import require_http_methods
 import json
 from bson.json_util import dumps
 from . import models
@@ -19,6 +20,7 @@ def weather(request):
 #Get
 #Returns ten records (default), or a specified number of records, or a specific record based on search terms
 #Parameters: none
+@require_http_methods(["GET"])
 def get(request):
     query = request.GET
     if 'time' in query or 'device_id' in query:
@@ -33,6 +35,7 @@ def get(request):
 #Post
 #Creates a new record or records
 #Parameters: new (record/array), bulk (boolean)
+@require_http_methods(["POST"])
 def post(request):
     body = request.body.decode('utf-8')
     bulk = request.POST.get('bulk', "false")
@@ -44,6 +47,7 @@ def post(request):
     return HttpResponse(response)
 #Put
 #Updates a record or records
+@require_http_methods(["PUT"])
 def put(request):
     body = request.body.decode('utf-8')
     json_data = json.loads(body)
@@ -61,6 +65,8 @@ def put(request):
 #Delete
 #Deletes a record or records
 #Parameters: search_terms, bulk (boolean)
+'''
+@require_http_methods(["DELETE"])
 def delete(request):
     body = request.body.decode('utf-8')
     json_data = json.loads(body)
@@ -70,3 +76,28 @@ def delete(request):
     elif bulk == "true":
         response = models.bulk_delete(json.loads(json_data['search_terms']))
     return HttpResponse(response)
+'''
+
+#Delete
+#Deletes a record or records
+@require_http_methods(["DELETE"])
+def delete(request, oid):
+    # Delete the record with the specified OID
+    result = models.delete(oid)
+    return HttpResponse(status=204)
+
+'''
+def delete(request):
+    print("Delete chosen")
+    query = request.GET
+    if 'oid' in query:
+        result = models.delete({'_id': query.get('oid')})
+        response = {'deleted_count': result.deleted_count}
+    else:
+        response = {'message': 'Please provide an oid to delete.'}
+    return JsonResponse(response, safe=False)
+'''
+
+
+
+
