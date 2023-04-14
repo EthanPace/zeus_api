@@ -81,12 +81,6 @@ def delete(request):
 #Delete
 #Deletes a record or records
 @require_http_methods(["DELETE"])
-def delete(request, oid):
-    # Delete the record with the specified OID
-    result = models.delete(oid)
-    return HttpResponse(status=204)
-
-'''
 def delete(request):
     print("Delete chosen")
     query = request.GET
@@ -96,8 +90,3 @@ def delete(request):
     else:
         response = {'message': 'Please provide an oid to delete.'}
     return JsonResponse(response, safe=False)
-'''
-
-
-
-

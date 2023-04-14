@@ -132,5 +132,5 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 # This setting was recommended by ChatGPT to disable redirection to HTTPS, but it didn't work. 
 # Did this to try fix the DELETE method
-#SECURE_SSL_REDIRECT = False
+SECURE_SSL_REDIRECT = False
 
