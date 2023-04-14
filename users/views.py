@@ -70,7 +70,6 @@ def post(request):
             hashes.append(hash(user['Password']))
         #Use the create "model" to create the records
         response = models.bulk_create(json_data['users'], hashes)
-        id_ = response.inserted_ids
     else:
         #Get the request body in sring format
         body = request.body.decode('utf-8')
@@ -78,9 +77,9 @@ def post(request):
         json_data = json.loads(body)
         #Use the create "model" to create the record
         response = models.create(json_data, hash(json_data['Password']))
-        id_ = response.inserted_id
+        models.user_trigger(response.inserted_id)
     #Return the response
-    return HttpResponse(models.user_trigger(id_))
+    return HttpResponse(200)
 
 #Put
 #Updates a record or records
@@ -131,6 +130,7 @@ def delete(request):
 '''
 #Delete
 #Deletes a record or records
+'''
 @require_http_methods(["DELETE"])
 def delete(request):
     print("Delete chosen")
@@ -142,6 +142,21 @@ def delete(request):
     else:
         response = {'message': 'Please provide an oid to delete.'}
     return JsonResponse(response, safe=False)
+'''
+
+@require_http_methods(["DELETE"])
+def delete(request):
+    body = request.body.decode('utf-8')
+    json_data = json.loads(body)
+    if 'oid' in json_data:
+        response = models.delete({'_id': ObjectId(json_data['oid'])})
+    else:
+        bulk = json_data.get('bulk', "false")
+        if bulk == "false":
+            response = models.delete(json_data['search_terms'])
+        elif bulk == "true":
+            response = models.bulk_delete(json_data['search_terms'])
+    return HttpResponse(response.deleted_count)
 
 #Authenticate
 #Allows a user to log in
