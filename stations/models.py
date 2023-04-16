@@ -20,7 +20,7 @@ def find(search = "", limit = 10):
     if search == "":
         return coll.find().limit(limit)
     else:
-        return coll.find({"_id":ObjectId(search)}).limit(limit)
+        return coll.find({"_id":search}).limit(limit)
 
 def create(new):
     return coll.insert_one(station(new))

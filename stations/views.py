@@ -28,8 +28,8 @@ def stations(request):
 #[localhost:8000/stations?limit=(limit)]
 def get(request):
     query = request.GET
-    if 'limit' in query or 'oid' in query:
-        cursor = models.find(query.get('oid', ""), int(query.get('limit', 10)))
+    if 'limit' in query or 'id' in query:
+        cursor = models.find(query.get('id', ""), int(query.get('limit', 10)))
     else:
         cursor = models.find(10)
     return JsonResponse(dumps(list(cursor)), safe=False)
