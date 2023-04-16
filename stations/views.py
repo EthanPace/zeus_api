@@ -26,6 +26,9 @@ def stations(request):
 #Gets a station or stations
 #Parameters: limit (int)
 #[localhost:8000/stations?limit=(limit)]
+'''
+localhost:8000/stations/?id=dlb_atm41_5282
+'''
 def get(request):
     query = request.GET
     if 'limit' in query or 'id' in query:

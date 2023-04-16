@@ -115,6 +115,11 @@ def put(request):
 #Delete
 #Deletes a record or records
 #Parameters: search_terms, bulk (boolean)
+'''
+{
+    "oid": "6418ee84371c5b5515bdc9e7"
+}
+'''
 def delete(request):
     body = request.body.decode('utf-8')
     json_data = json.loads(body)
