@@ -39,6 +39,47 @@ def get(request):
 #Post
 #Creates a new record or records
 #Parameters: new (record/array), bulk (boolean)
+'''
+{
+  "bulk": "true",
+  "new": [
+    {
+      "Time": "2022-01-01T00:00:00+00:00",
+      "Device ID": "dlb-atm41-0001",
+      "Device Name": "DLB ATM41 Test Device 1",
+      "Latitude": 45.123456,
+      "Longitude": -122.123456,
+      "Temperature (\u00b0C)": 20.5,
+      "Atmospheric Pressure (kPa)": 101.325,
+      "Lightning Average Distance (km)": 0.0,
+      "Lightning Strike Count": 0.0,
+      "Maximum Wind Speed (m/s)": 2.0,
+      "Precipitation mm/h": 0.0,
+      "Solar Radiation (W/m2)": 0.0,
+      "Vapor Pressure (kPa)": 2.0,
+      "Humidity (%)": 60.0,
+      "Wind Direction (\u00b0)": 180.0
+    },
+    {
+      "Time": "2022-01-02T00:00:00+00:00",
+      "Device ID": "dlb-atm41-0002",
+      "Device Name": "DLB ATM41 Test Device 2",
+      "Latitude": 45.654321,
+      "Longitude": -122.654321,
+      "Temperature (\u00b0C)": 18.0,
+      "Atmospheric Pressure (kPa)": 101.0,
+      "Lightning Average Distance (km)": 0.0,
+      "Lightning Strike Count": 0.0,
+      "Maximum Wind Speed (m/s)": 1.5,
+      "Precipitation mm/h": 0.0,
+      "Solar Radiation (W/m2)": 0.0,
+      "Vapor Pressure (kPa)": 1.8,
+      "Humidity (%)": 70.0,
+      "Wind Direction (\u00b0)": 270.0
+    }
+  ]
+}
+'''
 def post(request):
     body = request.body.decode('utf-8')
     bulk = request.POST.get('bulk', "false")
@@ -50,6 +91,12 @@ def post(request):
     return HttpResponse(response)
 #Put
 #Updates a record or records
+'''
+{
+  "bulk": "false",
+  "search_field":"Device Name", "search_term":"DLB ATM41 Charlestown Skate Park", "update_field":"Device Name", "update_value":"DLB ATM41 Possibly Charlestown Skate Park", "limit":100
+}
+'''
 def put(request):
     body = request.body.decode('utf-8')
     json_data = json.loads(body)

@@ -31,6 +31,9 @@ def update(search_terms, new):
 def delete(search_terms):
     return coll.delete_one(search_terms)
 
+def bulk_delete(search_terms):
+    return coll.delete_many(search_terms)
+
 def station_trigger():
     count = coll.count_documents({})
     if count < 10:

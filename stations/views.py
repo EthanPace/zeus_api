@@ -38,6 +38,21 @@ def get(request):
 #Creates a new station or stations
 #Parameters: new (record/array), bulk (boolean)
 #[localhost:8000/stations] {"new": {(key): (value)}}
+'''
+{
+    "bulk": "false",
+    "new": [
+            {
+                "_id": "dlb-atm-41-5281",
+                "Device Name": "DLB ATM41 Speers Point Pool",
+                "State": "NSW",
+                "Latitude": "-32.96305",
+                "Longitude": "151.61993",
+                "Last Response": ""
+            }
+            ]
+}
+'''
 def post(request):
     body = request.body.decode('utf-8')
     json_data = json.loads(body)
@@ -49,6 +64,12 @@ def post(request):
 #Updates a station or stations
 #Parameters: search_terms, new (record/array), bulk (boolean)
 #[localhost:8000/stations] {"bulk":(true/false), "search_terms": {(key): (value)}, "new": {(key): (value)}}
+'''
+{
+  "bulk": "false",
+  "search_field":"Device Name", "search_term":"DLB ATM41 Charlestown Skate Park", "update_field":"Device Name", "update_value":"DLB ATM41 Possibly Charlestown Skate Park", "limit":100
+}
+'''
 def put(request):
     body = request.body.decode('utf-8')
     json_data = json.loads(body)
@@ -70,6 +91,8 @@ def put(request):
 #[localhost:8000/stations] {"bulk":(true/false), "search_terms": {(key): (value)}, "new": {(key): (value)}}
 # Example: localhost:8000/stations
 #    {"bulk":"false", "search_terms": {"$oid": "64251a6bc0bde0d5eea40532"}, "new": {"Longitude": "-83.3792"}}
+
+'''
 def patch(request):
     body = request.body.decode('utf-8')
     try:
@@ -84,11 +107,34 @@ def patch(request):
     except:
         return HttpResponse("false")
     return HttpResponse(response)
-    
+'''
+def patch(request):
+    body = request.body.decode('utf-8')
+    json_data = json.loads(body)
+    #Get bulk parameter
+    bulk = json_data.get('bulk', "false")
+    #Check if this is a bulk update
+    if bulk == "false":
+        response = models.update({json_data['search_field']:json_data['search_term']}, {'$set':{json_data['update_field']:json_data['update_value']}})
+    elif bulk == "true":
+        if 'limit' in json_data:
+            response = models.bulk_update({json_data['search_field']:json_data['search_term']}, {'$set':{json_data['update_field']:json_data['update_value']}}, int(json_data['limit']))
+        else:
+            response = models.bulk_update({json_data['search_field']:json_data['search_term']}, {'$set':{json_data['update_field']:json_data['update_value']}})
+    return HttpResponse(response)
 #Delete
 #Deletes a station or stations
 #Parameters: search_terms, bulk (boolean)
 #[localhost:8000/stations/?bulk=true] {"search_terms": {(key): (value)}}
+'''
+{
+  "bulk": "false",
+  "search_terms":
+  {
+      "Device Name": "Dummy Station"
+  }
+}
+'''
 def delete(request):
     body = request.body.decode('utf-8')
     json_data = json.loads(body)
