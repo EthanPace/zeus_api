@@ -1,3 +1,4 @@
 from django.test import TestCase
 
-# Create your tests here.
+# Batch Operation
+# [localhost:8000/weather/?page_size=10&page=2]
