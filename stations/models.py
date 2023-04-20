@@ -6,7 +6,7 @@ import pymongo
 #   - Test update a specific weather station longitude and latitude (single) (and screencap the result)
 #   - Check that all the methods are standardised between files (more important for this one)
 
-client = pymongo.MongoClient("mongodb+srv://testUser:testPassword@nasadata.dpq7x0s.mongodb.net/test")
+client = pymongo.MongoClient("mongodb+srv://testUser:testPassword@nasadata.dpq7x0s.mongodb.net/test&tls=true")
 db = client['weatherDataDB']
 coll = db['stations']
 

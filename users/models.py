@@ -11,7 +11,7 @@ from rest_framework.authtoken.models import Token
 #     - Check that methods are standardized across apps (least important)
 
 # Create your models here.
-client = pymongo.MongoClient("mongodb+srv://testUser:testPassword@nasadata.dpq7x0s.mongodb.net/test")
+client = pymongo.MongoClient("mongodb+srv://testUser:testPassword@nasadata.dpq7x0s.mongodb.net/test&tls=true")
 db = client['weatherDataDB']
 coll = db['users']
 

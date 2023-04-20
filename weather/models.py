@@ -7,7 +7,7 @@ import pymongo
 #     - Check that methods are standardized across apps (least important)
 #    - Add OPTIONS method
 
-client = pymongo.MongoClient("mongodb+srv://testUser:testPassword@nasadata.dpq7x0s.mongodb.net/test")
+client = pymongo.MongoClient("mongodb+srv://testUser:testPassword@nasadata.dpq7x0s.mongodb.net/test&tls=true")
 db = client['weatherDataDB']
 coll = db['NSWWeatherData']
 

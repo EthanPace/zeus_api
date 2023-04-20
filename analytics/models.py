@@ -2,7 +2,7 @@ from json import loads
 from bson.json_util import dumps
 import pymongo
 
-client = pymongo.MongoClient("mongodb+srv://testUser:testPassword@nasadata.dpq7x0s.mongodb.net/test")
+client = pymongo.MongoClient("mongodb+srv://testUser:testPassword@nasadata.dpq7x0s.mongodb.net/test&tls=true")
 db = client['weatherDataDB']
 coll = db['NSWWeatherData']
 
