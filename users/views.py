@@ -57,6 +57,7 @@ def post(request):
             hashes.append(hash(user['Password']))
         #Use the create "model" to create the records
         response = models.bulk_create(json_data['users'], hashes)
+        return HttpResponse("Success: " + str(response.count) + " records created")
     else:
         #Get the request body in sring format
         body = request.body.decode('utf-8')
@@ -65,8 +66,7 @@ def post(request):
         #Use the create "model" to create the record
         response = models.create(json_data, hash(json_data['Password']))
         models.user_trigger(response.inserted_id)
-    #Return the response
-    return HttpResponse(200)
+        return HttpResponse("Success: " + str(response.inserted_id) + " record created")
 
 #Put
 #Updates a record or records
@@ -84,7 +84,7 @@ def put(request):
             response = models.bulk_update({json_data['search_field']:json_data['search_term']}, {'$set':{json_data['update_field']:json_data['update_value']}}, int(json_data['limit']))
         else:
             response = models.bulk_update({json_data['search_field']:json_data['search_term']}, {'$set':{json_data['update_field']:json_data['update_value']}})
-    return HttpResponse(response)
+    return HttpResponse("Success: " + str(response.modified_count) + " records updated")
 
 #Delete
 #Deletes a record or records
@@ -100,7 +100,7 @@ def delete(request):
             response = models.delete(json_data['search_terms'])
         elif bulk == "true":
             response = models.bulk_delete(json_data['search_terms'])
-    return HttpResponse(response.deleted_count)
+    return HttpResponse("Success: " + str(response.deleted_count) + " records deleted")
 
 #Options
 #Returns the allowed methods
@@ -119,7 +119,7 @@ def authenticate(request):
     print(hash(json_data['Password']))
     response = models.authenticate(json_data['Username'], hash(json_data['Password']))
     #Return the response (true/false)
-    return HttpResponse(response)
+    return HttpResponse("Result:" + response)
 
 #Helper Functions
 #Hash
@@ -127,23 +127,3 @@ def authenticate(request):
 #Parameters: string
 def hash(string):
     return sha256(string.encode('utf-8')).hexdigest()
-
-'''
-BELOW METHOD WAS PULLED FROM YOUTUBE VIDEO, CURRENTLY JUST FOR REFERENCE, 
-WOULD NOT WORK IN THIS PROJECT DUE TO NOT USING BUILT IN DATABASE
-@api_view(['POST',])
-def registation_view(request):
-    if request.method == 'POST':
-        serializer = RegistrationSerializer(data=request.data)
-        data = {}
-        if serializer.is_valid():
-            account = serializer.save()
-            data['response'] = "successfully registered a new user."
-            data['email'] = account.email
-            data['username'] = account.username
-            token = Token.objects.get(user=account).key
-            data['token'] = token
-        else:
-            data = serializer.errors
-        return Response(data)
-'''
