@@ -61,7 +61,7 @@ def post(request):
     json_data = json.loads(body)
     response = models.create(json_data)
     models.station_trigger()
-    return HttpResponse(response)
+    return HttpResponse("success: " + str(response.inserted_id) + " record created")
 
 #Put
 #Updates a station or stations
@@ -86,7 +86,7 @@ def put(request):
             response = models.bulk_update({json_data['search_field']:json_data['search_term']}, {'$set':{json_data['update_field']:json_data['update_value']}}, int(json_data['limit']))
         else:
             response = models.bulk_update({json_data['search_field']:json_data['search_term']}, {'$set':{json_data['update_field']:json_data['update_value']}})
-    return HttpResponse(response)
+    return HttpResponse("success: " + response.modified_count + " records updated")
 
 #Patch
 #Updates a station or stations
@@ -124,7 +124,7 @@ def patch(request):
             response = models.bulk_update({json_data['search_field']:json_data['search_term']}, {'$set':{json_data['update_field']:json_data['update_value']}}, int(json_data['limit']))
         else:
             response = models.bulk_update({json_data['search_field']:json_data['search_term']}, {'$set':{json_data['update_field']:json_data['update_value']}})
-    return HttpResponse(response)
+    return HttpResponse("success: " + response.modified_count + " records updated")
 #Delete
 #Deletes a station or stations
 #Parameters: search_terms, bulk (boolean)
@@ -149,7 +149,7 @@ def delete(request):
             response = models.delete(json_data['search_terms'])
         elif bulk == "true":
             response = models.bulk_delete(json_data['search_terms'])
-    return HttpResponse(response.deleted_count)
+    return HttpResponse("success: " + response.deleted_count + " records deleted")
 
 #Options
 #Returns the options for the stations view
