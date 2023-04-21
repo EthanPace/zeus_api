@@ -1,0 +1,496 @@
+openapi: 3.0.0
+info:
+  title: Zeus_API
+  description: API for NSW Weather Data with MongoDB
+  version: "1.0.0"
+tags:
+  - name: admins
+    description: Secured Admin-only calls
+  - name: managers
+    description: Methods available to managers
+  - name: public
+    description: Methods available to anyone
+  - name: other
+    description: Methods available to anyone, but with no effect on the database
+paths:
+  /weather:
+    get:
+      tags:
+        - public
+      summary: returns weather data based on query
+      description: |
+        By passing query parameters into the url, you can find
+        a specific datum, a range of them, or any matching a filter
+      parameters:
+        - in: query
+          name: page
+          description: page number
+          required: false
+          schema:
+            type: integer
+            default: 1
+        - in: query
+          name: page_size
+          description: number of results per page
+          required: false
+          schema:
+            type: integer
+            default: 10
+        - in: query
+          name: limit
+          description: maximum returned results by filter
+          required: false
+          schema:
+            type: integer
+            default: 10
+        - in: query
+          name: time
+          description: time of the datum
+          required: false
+          schema:
+            type: string
+            format: date-time
+        - in: query
+          name: device_id
+          description: device id of the datum
+          required: false
+          schema:
+            type: string
+        - in: query
+          name: oid
+          description: object id of the datum
+          required: false
+          schema:
+            type: string
+      responses:
+        '200':
+          description: successful operation
+        '400':
+          description: Invalid status value
+    post:
+      tags:
+        - managers
+      summary: adds a new weather datum
+      description: |
+        Adds a new weather datum to the database
+      parameters:
+        - in: query
+          name: bulk
+          description: whether to add a single or multiple datums
+          required: false
+          schema:
+            type: string
+            default: "false"
+        - in: body
+          name: body
+          description: weather datum to add
+          required: true
+          schema:
+            type: object
+      responses:
+        '200':
+          description: successful operation
+        '400':
+          description: Invalid status value
+    put:
+      tags:
+        - managers
+      summary: updates a weather datum
+      description: |
+        Updates a weather datum in the database
+      parameters:
+        - in: body
+          name: bulk
+          description: whether to update a single or multiple datums
+          required: false
+          schema:
+            type: string
+            default: "false"
+        - in: body
+          name: search_field
+          description: which field to search for the datum
+          required: true
+          schema:
+            type: string
+        - in: body
+          name: search_term
+          description: value of the field to search for the datum
+          required: true
+          schema:
+            type: string
+        - in: body
+          name: update_field
+          description: which field to update
+          required: true
+          schema:
+            type: string
+        - in: body
+          name: update_value
+          description: value to update the field to
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  page:
+                    type: integer
+                    format: int32
+                  page_size:
+                    type: integer
+                    format: int32
+                  total:
+                    type: integer
+                    format: int32
+        '400':
+          description: Invalid status value
+    delete:
+      tags:
+        - managers
+      summary: deletes a weather datum
+      description: |
+        Deletes a weather datum from the database
+      parameters:
+        - in: body
+          name: bulk
+          description: whether to delete a single or multiple datums
+          required: false
+          schema:
+            type: string
+            default: "false"
+        - in: query
+          name: search_terms
+          description: which field to search for the datum
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: successful operation
+        '400':
+          description: Invalid status value
+    options:
+      tags:
+        - other
+      summary: returns the options for the weather endpoint
+      description: |
+        Returns the options for the weather endpoint
+      responses:
+        '200':
+          description: successful operation
+        '400':
+          description: Invalid status value
+  /users:
+    get:
+      tags:
+        - admins
+      summary: returns user data based on query
+      description: |
+        By passing query parameters into the url, you can find
+        a specific datum, a range of them, or any matching a filter
+      parameters:
+        - in: query
+          name: limit
+          description: maximum returned results by filter
+          required: false
+          schema:
+            type: integer
+            default: 10
+        - in: query
+          name: oid
+          description: object id of the user
+          required: false
+          schema:
+            type: string
+      responses:
+        '200':
+          description: successful operation
+        '400':
+          description: Invalid status value
+    post:
+      tags:
+        - admins
+      summary: adds a new user
+      description: |
+        Adds a new user to the database
+      parameters:
+        - in: query
+          name: bulk
+          description: whether to add a single or multiple users
+          required: false
+          schema:
+            type: string
+            default: "false"
+        - in: body
+          name: body
+          description: user to be added
+          required: true
+          schema:
+            type: object
+      responses:
+        '200':
+          description: successful operation
+        '400':
+          description: Invalid status value
+    put:
+      tags:
+        - admins
+      summary: updates a user
+      description: |
+        Updates a user in the database
+      parameters:
+        - in: body
+          name: bulk
+          description: whether to update a single or multiple users
+          required: false
+          schema:
+            type: string
+            default: "false"
+        - in: body
+          name: search_field
+          description: which field to search for the user
+          required: true
+          schema:
+            type: string
+        - in: body
+          name: search_term
+          description: value of the field to search for the user
+          required: true
+          schema:
+            type: string
+        - in: body
+          name: update_field
+          description: which field to update
+          required: true
+          schema:
+            type: string
+        - in: body
+          name: update_value
+          description: value to update the field to
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: successful operation
+        '400':
+          description: Invalid status value
+    delete:
+      tags:
+        - admins
+      summary: deletes a user datum
+      description: |
+        Deletes a user datum from the database
+      parameters:
+        - in: body
+          name: bulk
+          description: whether to delete a single or multiple datums
+          required: false
+          schema:
+            type: string
+            default: "false"
+        - in: query
+          name: search_terms
+          description: which field to search for the datum
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: successful operation
+        '400':
+          description: Invalid status value
+    options:
+      tags:
+        - other
+      summary: returns the allowed methods for the endpoint
+      description: |
+        Returns the allowed methods for the endpoint
+      responses:
+        '200':
+          description: successful operation
+  /users/auth:
+    post:
+      tags:
+        - other
+      summary: authenticates a user
+      description: |
+        Authenticates a user
+      parameters:
+        - in: body
+          name: Username
+          description: username of the user to be authenticated
+          required: true
+          schema:
+            type: string
+        - in: body
+          name: Password
+          description: password of the user to be authenticated
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: successful operation
+        '400':
+          description: Invalid status value
+  /stations:
+    get:
+      tags:
+        - managers
+      summary: returns station data based on query
+      description: |
+        By passing query parameters into the url, you can find
+        a specific datum, a range of them, or any matching a filter
+      parameters:
+        - in: query
+          name: limit
+          description: maximum returned results by filter
+          required: false
+          schema:
+            type: integer
+            default: 10
+        - in: query
+          name: id
+          description: id of the station
+          required: false
+          schema:
+            type: string
+      responses:
+        '200':
+          description: successful operation
+        '400':
+          description: Invalid status value
+    post:
+      tags:
+        - managers
+      summary: adds a new station
+      description: |
+        Adds a new station to the database
+      parameters:
+      requestBody:
+        description: station to be added
+        content:
+          type: object
+      responses:
+        '200':
+          description: successful operation
+        '400':
+          description: Invalid status value
+    put:
+      tags:
+        - managers
+      summary: updates a station datum
+      description: |
+        Updates a station datum in the database
+      parameters:
+        - in: body
+          name: bulk
+          description: whether to update a single or multiple datums
+          required: false
+          schema:
+            type: string
+            default: "false"
+        - in: body
+          name: search_field
+          description: which field to search for the datum
+          required: true
+          schema:
+            type: string
+        - in: body
+          name: search_term
+          description: value of the field to search for the datum
+          required: true
+          schema:
+            type: string
+        - in: body
+          name: update_field
+          description: which field to update
+          required: true
+          schema:
+            type: string
+        - in: body
+          name: update_value
+          description: value of the field to update
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: successful operation
+        '400':
+          description: Invalid status value
+    delete:
+      tags:
+        - managers
+      summary: deletes a station
+      description: |
+        Deletes a station from the database
+      parameters:
+        - in: body
+          name: bulk
+          description: whether to delete a single or multiple
+          required: false
+          schema:
+            type: string
+            default: "false"
+        - in: query
+          name: search_terms
+          description: which field to search for the station
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: successful operation
+        '400':
+          description: Invalid status value
+    options:
+      tags:
+        - other
+      summary: returns the options for the stations endpoint
+      description: |
+        Returns the options for the stations endpoint
+      responses:
+        '200':
+          description: successful operation
+        '400':
+          description: Invalid status value
+  /analytics:
+    get:
+      tags:
+        - public
+      summary: returns analytics data based on query
+      description: |
+        By passing query parameters into the url, you would
+        theoretically be able to change what data got returned.
+        as it stands, this is not implemented
+      responses:
+        '200':
+          description: successful operation
+        '400':
+          description: Invalid status value
+    options:
+      tags:
+        - other
+      summary: returns the options for the analytics endpoint
+      description: |
+        Returns the options for the analytics endpoint
+      responses:
+        '200':
+          description: successful operation
+        '400':
+          description: Invalid status value
+components:
+  schemas:
+    weather:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
