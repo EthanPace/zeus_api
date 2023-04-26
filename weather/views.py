@@ -63,12 +63,8 @@ def put(request):
             response = models.bulk_update({json_data['search_field']:json_data['search_term']}, {'$set':{json_data['update_field']:json_data['update_value']}}, int(json_data['limit']))
         else:
             response = models.bulk_update({json_data['search_field']:json_data['search_term']}, {'$set':{json_data['update_field']:json_data['update_value']}})
-<<<<<<< HEAD
-    return HttpResponse(response)
-=======
     return HttpResponse("Success: " + str(response.modified_count) + " updated")
 
->>>>>>> 97e2fc6547eb98d400cb3bb5529086fcf3972abf
 #Delete
 #Deletes a record or records
 #Parameters: search_terms, bulk (boolean)
@@ -83,12 +79,8 @@ def delete(request):
             response = models.delete(json_data['search_terms'])
         elif bulk == "true":
             response = models.bulk_delete(json_data['search_terms'])
-<<<<<<< HEAD
-    return HttpResponse(response.deleted_count)
-=======
     return HttpResponse("Success: " + str(response.deleted_count) + " deleted")
 
->>>>>>> 97e2fc6547eb98d400cb3bb5529086fcf3972abf
 #Options
 #Returns the allowed methods
 def options(request):
